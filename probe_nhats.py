@@ -12,10 +12,10 @@ and it is ours. This probe adds two that were built by other people:
             ~600k bodies. The standard analytic NEO delta-v approximation,
             i.e. the same KIND of model as the shipped one.
 
-The pair is the point. Agreement with S-H says the shipped estimator is a
-well-behaved member of its own family; disagreement with NHATS says what that
-family costs against a really optimised trajectory. Neither is reachable from
-inside this repo's own code, which is what makes them worth the HTTP call.
+They answer different questions. Agreement with S-H says the shipped
+estimator is a well-behaved member of its own family; disagreement with NHATS
+says what that family costs against a really optimised trajectory. This repo's
+own code can reach neither, which is what makes them worth the HTTP call.
 
 Two traps this probe is written around, both hit while building it:
 
@@ -28,8 +28,8 @@ Two traps this probe is written around, both hit while building it:
      looks like.
   2. ASTERANK'S KEY IS A FLOAT. `pdes` arrives as float64, so 433 stringifies
      as "433.0", joins nothing, and says nothing about it: 1,000 rows in and 0
-     out. It goes through Int64 here, per CLAUDE.md's merge-key rule. That is
-     the NEOWISE defect wearing a different hat.
+     out. It goes through Int64 here, per the merge-key rule in economicspace's
+     CLAUDE.md. That is the NEOWISE defect wearing a different hat.
 
 This script READS ONLY. It fetches two public read-only APIs, does not import
 master, does not build a stage, and does not write to `asteroid_pipeline/`, so

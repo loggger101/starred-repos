@@ -6,27 +6,32 @@ pipeline, and the code and data worth taking from them. It lived in that repo
 as `research/starred-repos/` until 2026-10-20 and moved here with its history;
 where these notes say "this repo" or "the pipeline", they mean economicspace.
 
-🚨  **Nothing here is wired into the pipeline.** No module, config or CSV was
-touched and no `pipeline_version` moved. Every script reads only, and none of
-them runs Stage 1, 2 or 3, so none can invalidate a `.verify` baseline.
+Nothing here is wired into the pipeline. No module, config or CSV was touched
+and no `pipeline_version` moved. Every script reads only, and none of them runs
+Stage 1, 2 or 3, so none can invalidate a `.verify` baseline.
 
 ## What to read
 
 | file | what it is |
 |---|---|
-| [`FINDINGS.md`](FINDINGS.md) | **start here.** Five findings, each a measurement on this repo's own catalog, and what became of each |
+| [`FINDINGS.md`](FINDINGS.md) | Start here. Five findings, each a measurement on economicspace's own catalog, and what became of each |
 | [`SOURCES.md`](SOURCES.md) | per-repository inventory: licence, the specific files worth reading, and a verdict. Several stars are worth less here than they look |
-| [`CITATIONS.md`](CITATIONS.md) | **the authority for every reference and attribution obligation in this repo**, including what was adapted from whom here. The pipeline's own is [economicspace's](https://github.com/loggger101/economicspace/blob/main/CITATIONS.md) |
-| [`SPACE-MAP.md`](SPACE-MAP.md) | a focused re-audit of one repo the first pass got wrong. It found the orbit-quality gap |
-| [`SECOND-PASS.md`](SECOND-PASS.md) | a re-read of all seventeen asking what the first pass did not open. Four more findings, one of them the only external check on the delta-v model this repo did not build itself |
+| [`CITATIONS.md`](CITATIONS.md) | every reference and attribution obligation in this repo, including what was adapted from whom. The pipeline keeps its own in [economicspace's](https://github.com/loggger101/economicspace/blob/main/CITATIONS.md) |
+| [`SPACE-MAP.md`](SPACE-MAP.md) | a re-audit of the one repo the first pass got wrong. It found the orbit-quality gap |
+| [`SECOND-PASS.md`](SECOND-PASS.md) | a re-read of all seventeen for what the first pass did not open. Four more findings, including the only check on the delta-v model that economicspace did not build itself |
+| [`CLAUDE.md`](CLAUDE.md) | rules for editing here. The notes are a dated record, the probes read only, and nothing comes from a copyleft star |
 
 ## What to run
 
 Every script takes the root of an economicspace checkout as its working
-directory (it reads that checkout's `asteroid_pipeline/`), and needs only
-numpy and pandas. With this repo cloned beside it:
+directory. It reads that checkout's `asteroid_pipeline/asteroid_catalog.csv`,
+and `probe_taxonomy.py` also reads its `catalog_taxonomy.json`; economicspace's
+Stage 1 installs both. The only dependencies are numpy and pandas
+([`requirements.txt`](requirements.txt)), and `probe_nhats.py` needs network
+access to two public read-only APIs. With this repo cloned beside economicspace:
 
 ```bash
+py -m pip install -r ../starred-repos/requirements.txt
 py ../starred-repos/probe_plane_change.py
 py ../starred-repos/probe_taxonomy.py
 py ../starred-repos/probe_lambert.py --n 400 --seed 1
@@ -35,30 +40,37 @@ py ../starred-repos/probe_nhats.py --asterank
 
 | file | what it measures | runtime |
 |---|---|---|
-| `probe_plane_change.py` | where the plane change is paid (F1). Reproduces the five figures in `asteroid_transfer_dv_km_s`'s docstring first, which is what says it is measuring the shipped model | seconds |
+| `probe_plane_change.py` | where the plane change is paid (F1). It first reproduces the five figures in `asteroid_transfer_dv_km_s`'s docstring, which shows it is measuring the shipped model | seconds |
 | `probe_taxonomy.py` | taxonomy provenance and cross-survey disagreement (F2) | ~30 s |
 | `probe_lambert.py` | the closed-form estimator against a real optimised transfer (F4) | ~10 min at n=400 |
-| `probe_nhats.py` | the shipped estimator against two oracles built by other people: JPL's NHATS and the Shoemaker-Helin closed form (F6). Reproduces the docstring first, and prices BOTH apsides, which the plane-change probe deliberately does not | ~30 s |
-| `orbital.py` | Kepler solver, elements to state vectors, and a validated Izzo Lambert solver. Imported by `probe_lambert.py`; not a probe itself. economicspace keeps its own copy at its root, which its dashboard's orbit diagram draws with; this one is the copy F4 was measured with | - |
+| `probe_nhats.py` | the shipped estimator against two oracles other people built: JPL's NHATS and the Shoemaker-Helin closed form (F6). Reproduces the docstring first, and prices both apsides, which the plane-change probe deliberately does not | ~30 s |
+| `orbital.py` | Kepler solver, elements to state vectors, and a validated Izzo Lambert solver. `probe_lambert.py` imports it; it is not a probe. economicspace keeps its own copy at its root for the dashboard's orbit diagram; this one is the copy F4 was measured with | - |
+
+The figures in the notes were taken on whatever catalog release was installed
+at the time, and a re-run against a later release moves them. On 2026-10-20
+the plane-change survey drew 39,223 rows where FINDINGS.md's has 38,892, and
+the taxonomy probe's `comp_group` agreement read 68.1% against the recorded
+66.1%. The reference-body checks, which pin the probes to the shipped model,
+still reproduce to under 0.01 km/s.
 
 ## Data
 
 `sdsstax_ast.tab`, 7.5 MB, is the SDSS-based Asteroid Taxonomy V1.1 asteroid
-table from the PDS Small Bodies Node. It is **static**, so unlike the Stage 1
-catalog it does not change under a re-fetch, which is what makes it safe to
-commit. `probe_taxonomy.py` downloads it if absent. The citation, which is a
-condition of use, is in [`CITATIONS.md`](CITATIONS.md).
+table from the PDS Small Bodies Node. Unlike the Stage 1 catalog it is static
+and does not change under a re-fetch, so it is safe to commit.
+`probe_taxonomy.py` downloads it if it is missing. Using it obliges you to cite
+it; the citation is in [`CITATIONS.md`](CITATIONS.md).
 
-## The one thing to take away
+## The short version
 
-The two Δv findings point in **opposite directions** and partially cancel.
-F1 says the model overcharges the plane change; F4 says it undercharges the
-transfer geometry by more. Fixing either alone makes the model worse. If you
-read only one thing here, read F4's reversal table.
+The two Δv findings point in opposite directions and partially cancel. F1 says
+the model overcharges the plane change; F4 says it undercharges the transfer
+geometry by more. Fixing either one alone makes the model worse. If you read
+only one thing here, read F4's reversal table.
 
 [F6](SECOND-PASS.md#f6-two-independent-delta-v-oracles-exist-and-neither-was-used)
-is the second witness on that, and it is the first one this repo did not build
-itself: the shipped estimator agrees with the other published closed form at
-**0.949** and with JPL's optimised trajectories at **0.598**. The disagreement
-is between patched conics as a family and real trajectories, not between this
-pipeline and the literature.
+checks the same thing with the first instruments economicspace did not build
+itself. The shipped estimator agrees with the other published closed form at
+0.949 and with JPL's optimised trajectories at 0.598. Patched conics as a
+family disagree with real trajectories, and the pipeline sits where the
+published closed form does.
