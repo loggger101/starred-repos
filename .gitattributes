@@ -1,3 +1,11 @@
+# Text files are LF in the index and on every checkout, as they were in
+# economicspace, whose `*.py` / `*.md` rules did not come with the move: without
+# them a Windows clone (core.autocrlf=true by default) checked them out CRLF.
+*.py           text eol=lf
+*.md           text eol=lf
+LICENSE        text eol=lf
+.gitattributes text eol=lf
+
 # Archival data committed verbatim.  `sdsstax_ast.tab` is a PDS3 fixed-width
 # table from the NASA Planetary Data System, and it arrives CRLF.  Marking it
 # -text means git never converts it, on any host: the bytes that were
