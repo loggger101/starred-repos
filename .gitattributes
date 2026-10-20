@@ -1,0 +1,6 @@
+# Archival data committed verbatim.  `sdsstax_ast.tab` is a PDS3 fixed-width
+# table from the NASA Planetary Data System, and it arrives CRLF.  Marking it
+# -text means git never converts it, on any host: the bytes that were
+# downloaded are the bytes that are checked out, and a mechanically rewritten
+# archive file is no longer the artefact its citation names.  See CITATIONS.md.
+*.tab -text

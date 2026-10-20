@@ -52,7 +52,7 @@ which is not a rounding problem. Take the `dv` column and leave the rest.
 
 ### What they say
 
-`py research/starred-repos/probe_nhats.py --asterank`, on the 1,555,667-row
+`py ../starred-repos/probe_nhats.py --asterank`, on the 1,555,667-row
 catalog on disk:
 
 ```
@@ -308,4 +308,4 @@ and **Horizons** are NASA JPL public APIs; **NEODyS** is University of Pisa;
 
 Nothing was copied from any of the four copyleft repositories, and nothing in
 this pass came near them. The full position is in
-[`../../CITATIONS.md`](../../CITATIONS.md), which is the authority.
+[`CITATIONS.md`](CITATIONS.md), which is the authority.

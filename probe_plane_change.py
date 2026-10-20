@@ -22,8 +22,8 @@ and does not write to `asteroid_pipeline/`, so it cannot invalidate a
 `.verify` baseline.
 
 Usage:
-    py research/starred-repos/probe_plane_change.py
-    py research/starred-repos/probe_plane_change.py path/to/asteroid_catalog.csv
+    py ../starred-repos/probe_plane_change.py
+    py ../starred-repos/probe_plane_change.py path/to/asteroid_catalog.csv
 """
 
 import sys

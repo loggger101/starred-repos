@@ -39,8 +39,8 @@ This script READS ONLY.  It does not import master, builds no stage, and
 writes nothing to `asteroid_pipeline/`.
 
 Usage:
-    py research/starred-repos/probe_lambert.py
-    py research/starred-repos/probe_lambert.py --n 400 --seed 7
+    py ../starred-repos/probe_lambert.py
+    py ../starred-repos/probe_lambert.py --n 400 --seed 7
 """
 
 import argparse

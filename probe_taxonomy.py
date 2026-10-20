@@ -33,8 +33,8 @@ composition whatever its class; the SDSS table is numbered main-belt bodies,
 so this probe never meets one, but it is not a general re-derivation.
 
 Usage:
-    py research/starred-repos/probe_taxonomy.py
-    py research/starred-repos/probe_taxonomy.py --repo . --cache sdsstax_ast.tab
+    py ../starred-repos/probe_taxonomy.py
+    py ../starred-repos/probe_taxonomy.py --repo . --cache ../starred-repos/sdsstax_ast.tab
 """
 
 import argparse

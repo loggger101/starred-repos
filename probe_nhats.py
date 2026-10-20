@@ -36,9 +36,9 @@ master, does not build a stage, and does not write to `asteroid_pipeline/`, so
 it cannot invalidate a `.verify` baseline.
 
 Usage:
-    py research/starred-repos/probe_nhats.py
-    py research/starred-repos/probe_nhats.py --asterank
-    py research/starred-repos/probe_nhats.py --catalog path/to/asteroid_catalog.csv
+    py ../starred-repos/probe_nhats.py
+    py ../starred-repos/probe_nhats.py --asterank
+    py ../starred-repos/probe_nhats.py --catalog path/to/asteroid_catalog.csv
 """
 
 import argparse

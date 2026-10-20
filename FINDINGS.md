@@ -15,12 +15,12 @@ specific files worth reading, is in [`SOURCES.md`](SOURCES.md).
 | F1, the whole plane change charged at departure | **not applied, deliberately**: F4 measures it making the estimator worse in every inclination band |
 | F2, taxonomy guessed for most NEOs | open. The SDSS table is committed here as a check; composition is still a point estimate |
 | F3, pandas 3 dtype inference unprobed | closed by `probe_pandas_dtypes` in `platform_check.py` |
-| F4, the estimator optimistic by ~11% | open; a documented limitation in [MODEL.md](../../MODEL.md) |
+| F4, the estimator optimistic by ~11% | open; a documented limitation in [MODEL.md](https://github.com/loggger101/economicspace/blob/main/MODEL.md) |
 | F5, `mean_anomaly_deg` stored without its epoch | applied in catalog `1.2.0` (master `1.23.0`); the builder is now [AsteroidCatalog](https://github.com/loggger101/AsteroidCatalog) |
 
 The async-TAP NEOWISE fetcher landed in the same release, and verifying it
 found a non-total `ORDER BY` that resolved 27,802 bodies by arrival order; see
-[versions.md > catalog v1.2.0](../../versions.md#catalog-v120). The rest of
+[versions.md > catalog v1.2.0](https://github.com/loggger101/economicspace/blob/main/versions.md#catalog-v120). The rest of
 this document is the audit as written on 2026-09-03, kept as the measurement
 record.
 
@@ -339,7 +339,7 @@ optimum is epoch-independent. The epoch matters the moment anyone wants a
 
 ## Licence hazard, one paragraph
 
-This repo's code is MIT ([`LICENSE`](../../LICENSE)). Four of the seventeen
+This repo's code is MIT ([`LICENSE`](LICENSE)). Four of the seventeen
 stars are copyleft:
 **nyx** and **julie-dujardin/space-map** are AGPL-3.0, **CamPyRoS** is GPL-3.0,
 **Celestia** is GPL-2.0. Copying code from any of them would make this
