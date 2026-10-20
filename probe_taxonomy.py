@@ -34,7 +34,7 @@ so this probe never meets one, but it is not a general re-derivation.
 
 Usage:
     py ../starred-repos/probe_taxonomy.py
-    py ../starred-repos/probe_taxonomy.py --repo . --cache ../starred-repos/sdsstax_ast.tab
+    py ../starred-repos/probe_taxonomy.py --repo . --cache path/to/sdsstax_ast.tab
 """
 
 import argparse
@@ -42,6 +42,13 @@ import json
 import os
 
 import pandas as pd
+
+# The committed copy, beside this script.  A bare filename resolved against
+# the working directory, which since the move out of economicspace is that
+# checkout: a missing table was downloaded into its root, untracked and with
+# no `-text` rule to keep its CRLF.
+DEFAULT_CACHE = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                             "sdsstax_ast.tab")
 
 SDSS_URL = ("https://sbnarchive.psi.edu/pds3/non_mission/"
             "EAR_A_I0035_5_SDSSTAX_V1_1/data/sdsstax_ast_table.tab")
@@ -119,8 +126,9 @@ def report_provenance(cat):
 def main():
     """Compare the two taxonomies and price the disagreement."""
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--repo", default=".", help="repo root")
-    ap.add_argument("--cache", default="sdsstax_ast.tab", help="local copy of the PDS table")
+    ap.add_argument("--repo", default=".", help="economicspace checkout root")
+    ap.add_argument("--cache", default=DEFAULT_CACHE,
+                    help="local copy of the PDS table (default: the one beside this script)")
     args = ap.parse_args()
 
     tax = load_taxonomy_table(args.repo)

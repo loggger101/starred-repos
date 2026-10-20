@@ -28,7 +28,7 @@ numpy and pandas. With this repo cloned beside it:
 
 ```bash
 py ../starred-repos/probe_plane_change.py
-py ../starred-repos/probe_taxonomy.py --repo . --cache ../starred-repos/sdsstax_ast.tab
+py ../starred-repos/probe_taxonomy.py
 py ../starred-repos/probe_lambert.py --n 400 --seed 1
 py ../starred-repos/probe_nhats.py --asterank
 ```
@@ -39,7 +39,7 @@ py ../starred-repos/probe_nhats.py --asterank
 | `probe_taxonomy.py` | taxonomy provenance and cross-survey disagreement (F2) | ~30 s |
 | `probe_lambert.py` | the closed-form estimator against a real optimised transfer (F4) | ~10 min at n=400 |
 | `probe_nhats.py` | the shipped estimator against two oracles built by other people: JPL's NHATS and the Shoemaker-Helin closed form (F6). Reproduces the docstring first, and prices BOTH apsides, which the plane-change probe deliberately does not | ~30 s |
-| `orbital.py` | Kepler solver, elements to state vectors, and a validated Izzo Lambert solver. Imported by `probe_lambert.py`; not a probe itself | - |
+| `orbital.py` | Kepler solver, elements to state vectors, and a validated Izzo Lambert solver. Imported by `probe_lambert.py`; not a probe itself. economicspace keeps its own copy at its root, which its dashboard's orbit diagram draws with; this one is the copy F4 was measured with | - |
 
 ## Data
 
