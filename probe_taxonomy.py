@@ -27,7 +27,7 @@ master v1.36.0 it parsed the table out of modules/catalog.py as text, which
 stopped working at master v1.34.0 when Stage 1 stopped carrying the table.
 It writes nothing to `asteroid_pipeline/`.
 
-⚠️  `entry_for` is the builder's lookup by spectral type.  Since catalog data
+`entry_for` is the builder's lookup by spectral type.  Since catalog data
 contract 1.4.0 the builder also gives every body past 5.5 AU a D-type
 composition whatever its class; the SDSS table is numbered main-belt bodies,
 so this probe never meets one, but it is not a general re-derivation.

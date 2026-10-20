@@ -21,18 +21,17 @@ WHAT IS HERE AND WHERE IT CAME FROM
 
 WHAT THIS IS FOR, AND WHAT IT IS NOT FOR
 
-    ⚠️  A Lambert solve is NOT a drop-in replacement for
-    `asteroid_transfer_dv_km_s`.  A real transfer needs a grid over departure
-    epoch and time of flight (a porkchop) per body, which is thousands of
-    solves per asteroid against 1.55 M asteroids.  The pipeline's whole
-    architecture search already runs in ~1.6 h on the default cell; this would
-    end that.
+    A Lambert solve cannot stand in for `asteroid_transfer_dv_km_s`.  A real
+    transfer needs a grid over departure epoch and time of flight (a
+    porkchop) per body, which is thousands of solves per asteroid against
+    1.55 M asteroids.  The pipeline's whole architecture search already runs
+    in ~1.6 h on the default cell; this would end that.
 
-    ✅  What it IS for is a VALIDATION ORACLE on a sample: take a few hundred
-    bodies, find the true minimum two-impulse delta-v with real phasing, and
-    measure how far the closed-form estimator is from it.  That number does
-    not exist anywhere in this project, and the estimator's docstring compares
-    against five hand-picked bodies.
+    It works as a validation oracle on a sample: take a few hundred bodies,
+    find the true minimum two-impulse delta-v with real phasing, and measure
+    how far the closed-form estimator is from it.  That number does not exist
+    anywhere in this project, and the estimator's docstring compares against
+    five hand-picked bodies.
 
     See `probe_lambert.py`, which does exactly that.
 

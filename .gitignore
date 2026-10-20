@@ -1,0 +1,8 @@
+# probe_lambert.py imports orbital.py from beside itself, so Python caches
+# its bytecode here even though the probes run from an economicspace checkout.
+__pycache__/
+*.pyc
+
+# `probe_nhats.py --out` writes the joined frame wherever it is pointed.
+# The only data this repo commits is sdsstax_ast.tab; see CITATIONS.md.
+*.csv

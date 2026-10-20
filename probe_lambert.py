@@ -28,9 +28,9 @@ WHY THE EPOCH DOES NOT MATTER HERE
   would fix an absolute date, and it cannot be used for that anyway; see the
   epoch note in FINDINGS.md.
 
-  ⚠️  So the oracle is an UPPER BOUND on how good a real mission could be.  A
-  mission with a fixed launch date does worse.  That direction matters: the
-  estimator is already optimistic, and the oracle is optimistic too.
+  So the oracle is an UPPER BOUND on how good a real mission could be.  A
+  mission with a fixed launch date does worse.  The estimator is already
+  optimistic, and the oracle errs in the same direction.
 
 Earth is modelled as a Keplerian orbit on the JPL J2000 mean elements, which
 is right to about 1e-4 AU.  That is far below the differences being measured.

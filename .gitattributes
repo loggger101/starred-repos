@@ -3,8 +3,10 @@
 # them a Windows clone (core.autocrlf=true by default) checked them out CRLF.
 *.py           text eol=lf
 *.md           text eol=lf
+*.txt          text eol=lf
 LICENSE        text eol=lf
 .gitattributes text eol=lf
+.gitignore     text eol=lf
 
 # Archival data committed verbatim.  `sdsstax_ast.tab` is a PDS3 fixed-width
 # table from the NASA Planetary Data System, and it arrives CRLF.  Marking it
