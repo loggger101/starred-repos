@@ -44,7 +44,7 @@ py ../starred-repos/probe_nhats.py --asterank
 | `probe_taxonomy.py` | taxonomy provenance and cross-survey disagreement (F2) | ~30 s |
 | `probe_lambert.py` | the closed-form estimator against a real optimised transfer (F4) | ~10 min at n=400 |
 | `probe_nhats.py` | the shipped estimator against two oracles other people built: JPL's NHATS and the Shoemaker-Helin closed form (F6). Reproduces the docstring first, and prices both apsides, which the plane-change probe deliberately does not | ~30 s |
-| `orbital.py` | Kepler solver, elements to state vectors, and a validated Izzo Lambert solver. `probe_lambert.py` imports it; it is not a probe. economicspace keeps its own copy at its root for the dashboard's orbit diagram; this one is the copy F4 was measured with | - |
+| `orbital.py` | Kepler solver, elements to state vectors, and a validated Izzo Lambert solver. `probe_lambert.py` imports it; it is not a probe. This is the only copy of the solvers and the one F4 was measured with. economicspace's root `orbital.py` keeps just `elements_to_state`, for the dashboard's orbit diagram, and the two copies of that function are the same text | - |
 
 The figures in the notes were taken on whatever catalog release was installed
 at the time, and a re-run against a later release moves them. On 2026-10-20
