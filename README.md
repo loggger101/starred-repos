@@ -53,6 +53,22 @@ the taxonomy probe's `comp_group` agreement read 68.1% against the recorded
 66.1%. The reference-body checks, which pin the probes to the shipped model,
 still reproduce to under 0.01 km/s.
 
+On 2026-10-26, against catalog release `data-2026-10-21b`, the plane-change
+survey drew 39,398 rows and the `comp_group` agreement still read 68.1%. The
+reference bodies reproduced to 0.0081 km/s at worst.
+
+`py` is the Windows launcher; on Linux or macOS run the same commands with
+`python3`.
+
+## Checks
+
+[`.github/workflows/check.yml`](.github/workflows/check.yml) runs on every
+push to main and every pull request. It cannot run the probes, which need an
+economicspace checkout and its installed catalog. It checks that every script
+compiles, that `sdsstax_ast.tab` still has the sha256 recorded in
+[`CITATIONS.md`](CITATIONS.md), that every other text file is LF, and that the
+notes' relative links and anchors resolve.
+
 ## Data
 
 `sdsstax_ast.tab`, 7.5 MB, is the SDSS-based Asteroid Taxonomy V1.1 asteroid

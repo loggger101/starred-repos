@@ -5,7 +5,9 @@ An audit of 17 starred repositories against
 `research/starred-repos/` on 2026-10-20. There is no build, no test suite and
 no package: markdown notes, four read-only probe scripts, one helper module and
 one archival data file. [README.md](README.md) says what each file is and how
-to run the probes.
+to run the probes. CI (`.github/workflows/check.yml`) checks only what needs
+no economicspace checkout: the scripts compile, `sdsstax_ast.tab`'s sha256,
+LF line endings, and the notes' relative links.
 
 | file | is the authority for |
 |---|---|

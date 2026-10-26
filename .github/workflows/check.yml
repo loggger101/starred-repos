@@ -1,0 +1,68 @@
+# What can be checked without an economicspace checkout.  The probes need its
+# installed catalog, so CI does not run them; it checks that they still
+# compile, that the archival table is the bytes its citation names, that text
+# files are LF, and that the notes' relative links and anchors resolve.
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Probes compile
+        run: python -m py_compile $(git ls-files '*.py')
+
+      # The sha256 recorded in CITATIONS.md section 2.  sdsstax_ast.tab is
+      # committed verbatim (`-text` in .gitattributes), so any change to it is
+      # a rewrite of the archive's file, which CLAUDE.md forbids.
+      - name: SDSS table is the archive's bytes
+        run: |
+          echo "aba21eff3f973ca81d5b460fb158600690fe0f4223dd6c8b6e754216a9e2f9b5  sdsstax_ast.tab" | sha256sum -c -
+
+      # Every tracked file except the -text archive must be LF in the index.
+      - name: Text files are LF
+        run: |
+          bad=$(git ls-files --eol | awk '$3 != "attr/-text" && $1 != "i/lf" && $1 != "i/none"')
+          if [ -n "$bad" ]; then echo "$bad"; exit 1; fi
+
+      - name: Relative links and anchors resolve
+        run: |
+          python - <<'EOF'
+          import glob, os, re, sys
+
+          def slug(heading):
+              # GitHub's anchor rule: lower case, drop punctuation, spaces to hyphens.
+              return re.sub(r"[^\w\- ]", "", heading.strip().lower()).replace(" ", "-")
+
+          notes = sorted(glob.glob("*.md"))
+          anchors = {
+              p: {slug(h) for h in re.findall(r"^#+\s+(.*)$", open(p, encoding="utf-8").read(), re.M)}
+              for p in notes
+          }
+          bad = []
+          for p in notes:
+              for target in re.findall(r"\]\(([^)\s]+)\)", open(p, encoding="utf-8").read()):
+                  if re.match(r"[a-z]+:", target):
+                      continue
+                  path, _, anchor = target.partition("#")
+                  path = path or p
+                  if not os.path.exists(path):
+                      bad.append(f"{p}: {target} (no such file)")
+                  elif anchor and path.endswith(".md") and anchor not in anchors[path]:
+                      bad.append(f"{p}: {target} (no such heading)")
+          print("\n".join(bad) or f"{len(notes)} notes, every relative link resolves")
+          sys.exit(1 if bad else 0)
+          EOF

@@ -68,6 +68,10 @@ The underlying survey:
 > Digital Sky Survey Commissioning Data.* The Astronomical Journal 122, 2749.
 
 - Archive: `https://sbnarchive.psi.edu/pds3/non_mission/EAR_A_I0035_5_SDSSTAX_V1_1/`
+- sha256 of the committed file, unchanged since it was first committed on
+  2026-09-03:
+  `aba21eff3f973ca81d5b460fb158600690fe0f4223dd6c8b6e754216a9e2f9b5`. CI
+  checks it on every push.
 
 A published result that rests on this table should cite the papers above, and
 not this repository. NASA PDS data is in the public domain, but the scientific
