@@ -19,6 +19,7 @@ Stage 1, 2 or 3, so none can invalidate a `.verify` baseline.
 | [`CITATIONS.md`](CITATIONS.md) | every reference and attribution obligation in this repo, including what was adapted from whom. The pipeline keeps its own in [economicspace's](https://github.com/loggger101/economicspace/blob/main/CITATIONS.md) |
 | [`SPACE-MAP.md`](SPACE-MAP.md) | a re-audit of the one repo the first pass got wrong. It found the orbit-quality gap |
 | [`SECOND-PASS.md`](SECOND-PASS.md) | a re-read of all seventeen for what the first pass did not open. Four more findings, including the only check on the delta-v model that economicspace did not build itself |
+| [`THIRD-PASS.md`](THIRD-PASS.md) | the 194 stars added after the first audit, read on 2026-10-28. Eighteen touch the domain; prospector, a second asteroid-mining model under Apache-2.0, had code worth adapting, and F10 measures it against the shipped estimator |
 | [`CLAUDE.md`](CLAUDE.md) | rules for editing here. The notes are a dated record, the probes read only, and nothing comes from a copyleft star |
 
 ## What to run
@@ -36,6 +37,7 @@ py ../starred-repos/probe_plane_change.py
 py ../starred-repos/probe_taxonomy.py
 py ../starred-repos/probe_lambert.py --n 400 --seed 1
 py ../starred-repos/probe_nhats.py --asterank
+py ../starred-repos/probe_prospector.py
 ```
 
 | file | what it measures | runtime |
@@ -44,6 +46,7 @@ py ../starred-repos/probe_nhats.py --asterank
 | `probe_taxonomy.py` | taxonomy provenance and cross-survey disagreement (F2) | ~30 s |
 | `probe_lambert.py` | the closed-form estimator against a real optimised transfer (F4) | ~10 min at n=400 |
 | `probe_nhats.py` | the shipped estimator against two oracles other people built: JPL's NHATS and the Shoemaker-Helin closed form (F6). Reproduces the docstring first, and prices both apsides, which the plane-change probe deliberately does not | ~30 s |
+| `probe_prospector.py` | prospector's closed form against the shipped one, with NHATS ranking both (F10). Reproduces the docstring and prospector's own output first, then isolates the plane change, the 1 AU crossing and the departure pricing. Imports `probe_nhats.py`; adapted code, see [`CITATIONS.md`](CITATIONS.md) | ~30 s |
 | `orbital.py` | Kepler solver, elements to state vectors, and a validated Izzo Lambert solver. `probe_lambert.py` imports it; it is not a probe. This is the only copy of the solvers and the one F4 was measured with. economicspace's root `orbital.py` keeps just `elements_to_state`, for the dashboard's orbit diagram, and the two copies of that function are the same text | - |
 
 The figures in the notes were taken on whatever catalog release was installed
@@ -56,6 +59,10 @@ still reproduce to under 0.01 km/s.
 On 2026-10-26, against catalog release `data-2026-10-21b`, the plane-change
 survey drew 39,398 rows and the `comp_group` agreement still read 68.1%. The
 reference bodies reproduced to 0.0081 km/s at worst.
+
+On 2026-10-29, on the same release, `probe_prospector.py` joined 7,143 of
+NHATS's 7,159 bodies where F6 joined 7,006 of 7,033, and the shipped
+estimator's rank agreement with NHATS read 0.5970 against F6's 0.5976.
 
 `py` is the Windows launcher; on Linux or macOS run the same commands with
 `python3`.

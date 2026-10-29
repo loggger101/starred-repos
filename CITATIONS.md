@@ -16,7 +16,7 @@ none of them reaches a CSV; they are the external oracles
 - NASA JPL NHATS, `https://ssd-api.jpl.nasa.gov/nhats.api`. Optimised
   round-trip delta-v and mission duration for the near-Earth asteroids
   accessible to human spaceflight. Read by
-  `probe_nhats.py`.
+  `probe_nhats.py` and `probe_prospector.py`.
 - NASA JPL Horizons, `https://ssd.jpl.nasa.gov/api/horizons.api`, and the
   NAIF kernel archive. Recommended in F7 for bounding the two-body error in
   F4's Lambert oracle; not yet used.
@@ -38,6 +38,14 @@ none of them reaches a CSV; they are the external oracles
   > DeMeo, F. E., Binzel, R. P., Slivan, S. M., and Bus, S. J. (2009). *An
   > extension of the Bus asteroid taxonomy into the near-infrared.* Icarus,
   > 202(1), 160-180.
+
+- Toliou, Granvik and Tsirvoulis (2021), MNRAS, the minimum-perihelion grid,
+  `https://www.mv.helsinki.fi/home/mgranvik/data/Toliou+_2021_MNRAS/Toliou+_2021_MNRAS.dat.gz`.
+  Found through prospector and recommended in
+  [`THIRD-PASS.md`](THIRD-PASS.md); not yet used. Cite the paper if it is.
+- Lowell Observatory AstorbDB, `https://astorbdb.lowell.edu/v1/graphql`.
+  Per-survey albedo, taxonomy and lightcurve determinations. Recommended in
+  [`THIRD-PASS.md`](THIRD-PASS.md); not yet used.
 
 ---
 
@@ -125,6 +133,39 @@ stores.
 The obligation is that the copyright notice and the MIT permission notice
 travel with any distribution. The notice above, in this file, meets it.
 
+### prospector, Apache-2.0
+
+`probe_prospector.py`, the functions `meeting_legs` and `intercept_dv`, are
+adapted from `prospector/solvers/edelbaum.py` (Karmanplus/prospector 0.4.3,
+commit `48d464a`), and the two constants beside them are mirrored from
+`prospector/constants.py`.
+
+Upstream's `NOTICE`, verbatim:
+
+```
+prospector
+Copyright 2026 Karman+
+
+Licensed under the Apache License, Version 2.0. See the LICENSE file for terms.
+```
+
+The licence it names is [`LICENSE-Apache-2.0.txt`](LICENSE-Apache-2.0.txt),
+upstream's `LICENSE` with its line endings converted to LF and no other change.
+
+What changed: upstream's `intercept_dv` returns the cheapest total of three
+meetings. `meeting_legs` returns each meeting's departure and match legs
+separately, so `probe_prospector.py` can price the departure from LEO as well
+as heliocentrically; it takes the circular speed as a parameter; and it fixes
+the departure orbit at a0 = 1 AU and i0 = 0, which are upstream's defaults.
+`intercept_dv` here rebuilds upstream's total from those legs, and the probe
+checks it against upstream's own output on five bodies before measuring
+anything. `spiral_dv`, `lowthrust_dv` and `evaluate_dataframe` were not taken.
+
+Apache-2.0 section 4 asks that a copy of the licence and the `NOTICE` travel
+with any redistribution, and that changed files say they were changed. The
+licence file, this section and the docstrings in `probe_prospector.py` meet
+those obligations.
+
 - `https://github.com/skyfielders/python-skyfield`
 
 ---
@@ -165,9 +206,9 @@ reached by way of skyfield's implementation, which is credited in section 3.
 
 ## 5. Repositories audited, and what was taken from each
 
-This repository records a survey of 17 repositories. Most were read and
-nothing was taken from them, and this table gives the licence position for
-all of them.
+This repository records a survey of 17 repositories, and a third pass read 18
+more. Most were read and nothing was taken from them, and these tables give
+the licence position for all of them.
 
 They were read twice. The second pass, in [`SECOND-PASS.md`](SECOND-PASS.md),
 moved rows here, because a repository can add exactly the thing it was
@@ -193,9 +234,33 @@ rejected for lacking. The licence column does not go stale.
 | cuspaceflight/CamPyRoS | GPL-3.0 | nothing |
 | CelestiaProject/Celestia | GPL-2.0 | nothing |
 
-Nothing is derived from any of the four copyleft projects. They are listed
-because they were read, and the listing is the record that they were read and
-not copied.
+The third pass, in [`THIRD-PASS.md`](THIRD-PASS.md), read the 18 repositories
+among the stars added after the first audit that touch the domain.
+
+| repository | licence | what was taken |
+|---|---|---|
+| Karmanplus/prospector | Apache-2.0 | code, adapted from `solvers/edelbaum.py`; see section 3. `enrichment/models/perihelion.py` is recommended and not yet taken |
+| esa/pykep | MPL-2.0 | nothing yet |
+| matthewholman/assist | GPL-3.0 | nothing. Recommended as a separately run instrument only |
+| hannorein/rebound | GPL-3.0 | nothing |
+| dtamayo/reboundx | GPL-3.0 | nothing |
+| shadden/celmech | GPL-3.0 | nothing |
+| statsmodels/statsmodels | BSD-3 | nothing yet |
+| nyx-space/anise | MPL-2.0 | nothing |
+| AndrewAnnex/SpiceyPy | MIT | nothing |
+| relf/EGObox | Apache-2.0 | nothing |
+| visgl/deck.gl | MIT | nothing |
+| CS-SI/Orekit | Apache-2.0 | nothing |
+| nyx-space/hifitime | MPL-2.0 | nothing |
+| astropy/astropy | BSD-3 | nothing |
+| jobovy/galpy | BSD-3 | nothing |
+| HIPS/autograd | MIT | nothing |
+| sympy/sympy | BSD-3 | nothing |
+| ranaroussi/yfinance | Apache-2.0 | nothing |
+
+Nothing is derived from any of the eight copyleft projects across both
+tables. They are listed because they were read, and the listing is the record
+that they were read and not copied.
 
 Read each licence file rather than GitHub's label. `pds4_tools` shows no
 licence on GitHub because its BSD-3 text sits in a file named `LICENSES`,
