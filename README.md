@@ -19,7 +19,7 @@ Stage 1, 2 or 3, so none can invalidate a `.verify` baseline.
 | [`CITATIONS.md`](CITATIONS.md) | every reference and attribution obligation in this repo, including what was adapted from whom. The pipeline keeps its own in [economicspace's](https://github.com/loggger101/economicspace/blob/main/CITATIONS.md) |
 | [`SPACE-MAP.md`](SPACE-MAP.md) | a re-audit of the one repo the first pass got wrong. It found the orbit-quality gap |
 | [`SECOND-PASS.md`](SECOND-PASS.md) | a re-read of all seventeen for what the first pass did not open. Four more findings, including the only check on the delta-v model that economicspace did not build itself |
-| [`THIRD-PASS.md`](THIRD-PASS.md) | the 194 stars added after the first audit, read on 2026-10-28. Eighteen touch the domain; prospector, a second asteroid-mining model under Apache-2.0, had code worth adapting, and F10 measures it against the shipped estimator |
+| [`THIRD-PASS.md`](THIRD-PASS.md) | the 194 stars added after the first audit, read on 2026-10-28. Eighteen touch the domain; prospector, a second asteroid-mining model under Apache-2.0, had code worth adapting. F10 to F14, measured on 2026-10-29, test the shipped delta-v estimator, the guessed taxonomies, the water and spin of the bodies at the top of the ranking, and how well their orbits pin down delta-v |
 | [`CLAUDE.md`](CLAUDE.md) | rules for editing here. The notes are a dated record, the probes read only, and nothing comes from a copyleft star |
 
 ## What to run
@@ -27,9 +27,15 @@ Stage 1, 2 or 3, so none can invalidate a `.verify` baseline.
 Every script takes the root of an economicspace checkout as its working
 directory. It reads that checkout's `asteroid_pipeline/asteroid_catalog.csv`,
 and `probe_taxonomy.py` also reads its `catalog_taxonomy.json`; economicspace's
-Stage 1 installs both. The only dependencies are numpy and pandas
-([`requirements.txt`](requirements.txt)), and `probe_nhats.py` needs network
-access to two public read-only APIs. With this repo cloned beside economicspace:
+Stage 1 installs both. `probe_perihelion.py`, `probe_taxonomy_prior.py`,
+`probe_spin.py` and `probe_covariance.py` also read its
+`profitability_catalog.csv`, which a full run writes. The only dependencies
+are numpy and pandas ([`requirements.txt`](requirements.txt)).
+`probe_nhats.py`, `probe_prospector.py` and `probe_covariance.py` need network
+access to public read-only APIs, and `probe_perihelion.py` downloads a 248 MB
+table once, to
+`~/.cache/starred-repos` rather than this checkout. With this repo cloned
+beside economicspace:
 
 ```bash
 py -m pip install -r ../starred-repos/requirements.txt
@@ -38,6 +44,10 @@ py ../starred-repos/probe_taxonomy.py
 py ../starred-repos/probe_lambert.py --n 400 --seed 1
 py ../starred-repos/probe_nhats.py --asterank
 py ../starred-repos/probe_prospector.py
+py ../starred-repos/probe_taxonomy_prior.py
+py ../starred-repos/probe_perihelion.py
+py ../starred-repos/probe_spin.py
+py ../starred-repos/probe_covariance.py
 ```
 
 | file | what it measures | runtime |
@@ -47,6 +57,10 @@ py ../starred-repos/probe_prospector.py
 | `probe_lambert.py` | the closed-form estimator against a real optimised transfer (F4) | ~10 min at n=400 |
 | `probe_nhats.py` | the shipped estimator against two oracles other people built: JPL's NHATS and the Shoemaker-Helin closed form (F6). Reproduces the docstring first, and prices both apsides, which the plane-change probe deliberately does not | ~30 s |
 | `probe_prospector.py` | prospector's closed form against the shipped one, with NHATS ranking both (F10). Reproduces the docstring and prospector's own output first, then isolates the plane change, the 1 AU crossing and the departure pricing. Imports `probe_nhats.py`; adapted code, see [`CITATIONS.md`](CITATIONS.md) | ~30 s |
+| `probe_taxonomy_prior.py` | how often a guessed taxonomy is right (F11): the builder's two rules against fitted multinomial logits on a hold-out, then an empirical prior for NEOs applied to the albedo_assumed NEOs and the top of the ranking. Checks its mirror of the builder's rules against the release, and its fit against synthetic data, first | ~40 s |
+| `probe_perihelion.py` | the Toliou et al. (2021) minimum-perihelion prior for every NEO and the top of the ranking (F12). Reproduces prospector's own figures and checks its grid lookup against prospector's full scan first; adapted code, see [`CITATIONS.md`](CITATIONS.md) | ~2.5 min, plus a one-time download and parse |
+| `probe_spin.py` | whether the NEOs, and the top of the ranking, spin too fast to hold loose regolith (F13). Prospector's Holsapple cohesion model reduced to a sphere, with its shape-integral bug corrected; reproduces upstream's figures with the bug, and checks the closed form against a bisection, first. Adapted code, see [`CITATIONS.md`](CITATIONS.md) | ~1 min |
+| `probe_covariance.py` | NEODyS orbit covariance pushed through the shipped delta-v estimator for the NEOs in the top 100 rows (F14). Reproduces the docstring, and checks each parsed covariance against NEODyS's RMS line, first. One request per body | ~1.5 min |
 | `orbital.py` | Kepler solver, elements to state vectors, and a validated Izzo Lambert solver. `probe_lambert.py` imports it; it is not a probe. This is the only copy of the solvers and the one F4 was measured with. economicspace's root `orbital.py` keeps just `elements_to_state`, for the dashboard's orbit diagram, and the two copies of that function are the same text | - |
 
 The figures in the notes were taken on whatever catalog release was installed

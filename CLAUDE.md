@@ -3,7 +3,7 @@
 An audit of 17 starred repositories against
 [economicspace](https://github.com/loggger101/economicspace), moved out of its
 `research/starred-repos/` on 2026-10-20. There is no build, no test suite and
-no package: markdown notes, five read-only probe scripts, one helper module and
+no package: markdown notes, nine read-only probe scripts, one helper module and
 one archival data file. [README.md](README.md) says what each file is and how
 to run the probes. CI (`.github/workflows/check.yml`) checks only what needs
 no economicspace checkout: the scripts compile, `sdsstax_ast.tab`'s sha256,
