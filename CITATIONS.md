@@ -22,7 +22,9 @@ none of them reaches a CSV; they are the external oracles
   F4's Lambert oracle; not yet used.
 - NEODyS (University of Pisa and SpaceDyS),
   `https://newton.spacedys.com/neodys/`. Per-object orbital elements with the
-  full 6x6 covariance. Recommended in F9; not yet used.
+  full 6x6 covariance. Recommended in F9; read by `probe_covariance.py` (F14)
+  from `https://newton.spacedys.com/~neodys2/epoch/<designation>.ke1`, one
+  request per body.
 - Asterank, `http://www.asterank.com/api/asterank`, MIT. Used for its `dv`
   column only, which is the Shoemaker-Helin closed-form delta-v
   approximation. Its economic columns return degenerate values through the
@@ -41,8 +43,10 @@ none of them reaches a CSV; they are the external oracles
 
 - Toliou, Granvik and Tsirvoulis (2021), MNRAS, the minimum-perihelion grid,
   `https://www.mv.helsinki.fi/home/mgranvik/data/Toliou+_2021_MNRAS/Toliou+_2021_MNRAS.dat.gz`.
-  Found through prospector and recommended in
-  [`THIRD-PASS.md`](THIRD-PASS.md); not yet used. Cite the paper if it is.
+  Found through prospector. Read by `probe_perihelion.py`, which downloads it
+  to a cache outside this checkout and checks it against the sha256 of the
+  2026-10-29 download, `8b895c663b461054a86ecd43ee17dfc0b84e3278c96fd753a29bf19d68a7ad86`
+  (247,823,013 bytes). Not committed. Cite the paper if F12 is used.
 - Lowell Observatory AstorbDB, `https://astorbdb.lowell.edu/v1/graphql`.
   Per-survey albedo, taxonomy and lightcurve determinations. Recommended in
   [`THIRD-PASS.md`](THIRD-PASS.md); not yet used.
@@ -135,6 +139,7 @@ travel with any distribution. The notice above, in this file, meets it.
 
 ### prospector, Apache-2.0
 
+Three probes carry code from prospector.
 `probe_prospector.py`, the functions `meeting_legs` and `intercept_dv`, are
 adapted from `prospector/solvers/edelbaum.py` (Karmanplus/prospector 0.4.3,
 commit `48d464a`), and the two constants beside them are mirrored from
@@ -161,10 +166,41 @@ the departure orbit at a0 = 1 AU and i0 = 0, which are upstream's defaults.
 checks it against upstream's own output on five bodies before measuring
 anything. `spiral_dv`, `lowthrust_dv` and `evaluate_dataframe` were not taken.
 
+`probe_perihelion.py`, the functions `load_table` and `expected_q_min` and the
+constants `AXIS_RANGES` and `THRESHOLDS_AU`, are adapted from
+`prospector/enrichment/models/perihelion.py` (same release and commit), under
+the same `NOTICE` and licence. What changed: the loader keeps only lines that
+carry 30 numbers, because the download is a tar archive inside gzip; it checks
+the download's sha256, caches outside this checkout, and keeps the first 30 of
+the table's 160 columns. `expected_q_min` is upstream's
+`expected_min_perihelion_au` vectorised over bodies. The nearest-cell search
+is new: it snaps each axis to the nearest grid value and falls back to
+upstream's full scan only where that cell is empty, and the probe checks it
+against the full scan before measuring.
+
+`probe_spin.py`, the functions `friction_coefficient`, `stresses`,
+`min_cohesion_pa` and `cohesionless_period_h` and the constants beside them,
+are adapted from `prospector/enrichment/models/cohesion.py` (same release and
+commit), under the same `NOTICE` and licence. The window width `MAG_WINDOW` is
+from `prospector/enrichment/models/spin.py`. What changed: the model is
+reduced to a sphere, where Holsapple's shape integrals are 2/3 each in closed
+form, in place of upstream's numerical integration over a triaxial ellipsoid;
+it is vectorised over bodies; and the cohesionless critical period is solved
+in closed form, where upstream solves a quadratic. The shape integral is a
+correction, not only a simplification: upstream's x-axis integrand carries the
+exponents (1.5, 0.5, 1.5) where Holsapple (2007) has (1.5, 0.5, 0.5), so it
+returns 0.4 for a sphere. The probe keeps upstream's value as `A_X_UPSTREAM`
+only to show it reproduces upstream's figures with it. The empirical share of
+fast rotators in the H window replaces `spin.py`'s Johnson S_B fit, whose code
+was not taken.
+
+> Holsapple, K. A. (2007). *Spin limits of Solar System bodies: From the small
+> fast-rotators to 2003 EL61.* Icarus, 187(2), 500-509.
+
 Apache-2.0 section 4 asks that a copy of the licence and the `NOTICE` travel
 with any redistribution, and that changed files say they were changed. The
-licence file, this section and the docstrings in `probe_prospector.py` meet
-those obligations.
+licence file, this section and the docstrings in `probe_prospector.py`,
+`probe_perihelion.py` and `probe_spin.py` meet those obligations.
 
 - `https://github.com/skyfielders/python-skyfield`
 
@@ -218,7 +254,7 @@ rejected for lacking. The licence column does not go stale.
 |---|---|---|
 | skyfielders/python-skyfield | MIT | code, adapted; see section 3 |
 | juliensimon/space-datasets | MIT | the PDS3 column layout for the SDSS table (section 2), and the JPL NHATS endpoint used by `probe_nhats.py` |
-| astropy/astroquery | BSD-3 | nothing. It showed that IRSA's async TAP was the right approach; the implementation here is written against `requests`. Its NEODyS client is where the covariance service was found |
+| astropy/astroquery | BSD-3 | nothing. It showed that IRSA's async TAP was the right approach; the implementation here is written against `requests`. Its NEODyS client is where the covariance service was found, and `probe_covariance.py` reads that service with a parser written against the file format |
 | julie-dujardin/space-map | AGPL-3.0 | nothing. It showed that SBDB publishes a field list, which is how `condition_code` was found missing |
 | Z3Prover/z3 | MIT | nothing yet |
 | Pyomo/pyomo | BSD-3 | nothing |
@@ -239,13 +275,13 @@ among the stars added after the first audit that touch the domain.
 
 | repository | licence | what was taken |
 |---|---|---|
-| Karmanplus/prospector | Apache-2.0 | code, adapted from `solvers/edelbaum.py`; see section 3. `enrichment/models/perihelion.py` is recommended and not yet taken |
+| Karmanplus/prospector | Apache-2.0 | code, adapted from `solvers/edelbaum.py`, `enrichment/models/perihelion.py` and `enrichment/models/cohesion.py`; see section 3 |
 | esa/pykep | MPL-2.0 | nothing yet |
 | matthewholman/assist | GPL-3.0 | nothing. Recommended as a separately run instrument only |
 | hannorein/rebound | GPL-3.0 | nothing |
 | dtamayo/reboundx | GPL-3.0 | nothing |
 | shadden/celmech | GPL-3.0 | nothing |
-| statsmodels/statsmodels | BSD-3 | nothing yet |
+| statsmodels/statsmodels | BSD-3 | nothing. Its `MNLogit` named the model `probe_taxonomy_prior.py` fits; the fit there is written in numpy from the likelihood |
 | nyx-space/anise | MPL-2.0 | nothing |
 | AndrewAnnex/SpiceyPy | MIT | nothing |
 | relf/EGObox | Apache-2.0 | nothing |
