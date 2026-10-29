@@ -3,7 +3,7 @@
 An audit of 17 starred repositories against
 [economicspace](https://github.com/loggger101/economicspace), moved out of its
 `research/starred-repos/` on 2026-10-20. There is no build, no test suite and
-no package: markdown notes, four read-only probe scripts, one helper module and
+no package: markdown notes, five read-only probe scripts, one helper module and
 one archival data file. [README.md](README.md) says what each file is and how
 to run the probes. CI (`.github/workflows/check.yml`) checks only what needs
 no economicspace checkout: the scripts compile, `sdsstax_ast.tab`'s sha256,
@@ -32,8 +32,10 @@ LF line endings, and the notes' relative links.
 - Any probe that prices delta-v reproduces `asteroid_transfer_dv_km_s`'s five
   docstring figures before it measures anything, as the plane-change and NHATS
   probes do. That check is what shows it is pricing the shipped model.
-- Copy nothing from the four copyleft stars (nyx, space-map, CamPyRoS,
-  Celestia); reimplement from the paper. Code adapted from a permissive
+- Copy nothing from the eight copyleft stars (nyx, space-map, CamPyRoS,
+  Celestia, and from the third pass ASSIST, REBOUND, REBOUNDx, celmech);
+  reimplement from the paper. A GPL tool may be run as a separate step whose
+  output a probe reads, never imported by one. Code adapted from a permissive
   project gets its notice, and a note of what changed, in `CITATIONS.md` in
   the same commit.
 - `sdsstax_ast.tab` is byte for byte the archive's file (CRLF, `-text` in
