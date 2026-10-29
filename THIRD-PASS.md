@@ -20,12 +20,13 @@ of it can be adapted here.
 
 Nothing here is wired into the pipeline. The pass itself, on 2026-10-28, was a
 reading plus the live checks dated below. Five measurements followed on
-2026-10-29, each with a probe:
+2026-10-29, each with a probe; F11 onward are in
+[`FOURTH-PASS.md`](FOURTH-PASS.md):
 [F10](#f10-prospectors-estimator-ranks-closer-to-jpl-and-the-plane-change-is-not-why),
-[F11](#f11-a-guessed-taxonomy-is-right-about-half-the-time-and-a-guessed-c-less),
-[F12](#f12-the-top-of-the-ranking-probably-never-passed-close-to-the-sun),
-[F13](#f13-the-bodies-that-lead-the-ranking-spin-too-fast-to-hold-loose-regolith)
-and [F14](#f14-orbit-uncertainty-barely-moves-delta-v-it-moves-where-the-body-is).
+[F11](FOURTH-PASS.md#f11-a-guessed-taxonomy-is-right-about-half-the-time-and-a-guessed-c-less),
+[F12](FOURTH-PASS.md#f12-the-top-of-the-ranking-probably-never-passed-close-to-the-sun),
+[F13](FOURTH-PASS.md#f13-the-bodies-that-lead-the-ranking-spin-too-fast-to-hold-loose-regolith)
+and [F14](FOURTH-PASS.md#f14-orbit-uncertainty-barely-moves-delta-v-it-moves-where-the-body-is).
 
 | repository | licence | verdict |
 |---|---|---|
@@ -339,339 +340,24 @@ No module, config or CSV was touched, and no number a run produces moved.
    estimator, prospector's and NHATS side by side.~~ Done in F10. On
    accessible NEAs it retires placement B, and it points the shipped
    estimator's rank error at the match leg.
-2. Bound F4's oracle with ASSIST on a sample of near-Earth bodies, as a
+2. ~~Bound F4's oracle with ASSIST on a sample of near-Earth bodies, as a
    separate GPL step writing a CSV. This replaces `SECOND-PASS.md`'s item 5,
-   whose kernels reach only the main belt.
+   whose kernels reach only the main belt.~~ Done in
+   [F19](FOURTH-PASS.md#f19-f4s-oracle-is-not-the-problem-its-two-body-error-is-00035-kms)
+   with JPL Horizons instead, which needs neither ASSIST nor a Linux build. The
+   oracle's two-body error is a median 0.0035 km/s against F4's 1.3.
 3. ~~Fit F2's prior with `MNLogit` before building anything with PyMC.~~
-   Done in F11, in numpy. For NEOs the fitted model does not beat base rates,
+   Done in [F11](FOURTH-PASS.md#f11-a-guessed-taxonomy-is-right-about-half-the-time-and-a-guessed-c-less), in numpy. For NEOs the fitted model does not beat base rates,
    and the empirical prior says the guessed C is wrong about 70% of the time.
 4. ~~Read the Toliou table against the C-complex NEOs near the top of the
-   ranking.~~ Done in F12. It finds no reason to doubt their water.
+   ranking.~~ Done in [F12](FOURTH-PASS.md#f12-the-top-of-the-ranking-probably-never-passed-close-to-the-sun). It finds no reason to doubt their water.
 5. Calibrate `dv_penalty_factor` against Sims-Flanagan, following
    prospector's solver. Last, because it needs pykep, and on Windows that means
    conda or WSL.
 
-None of these moves a number a run produces. Items 2 and 5 are still open,
-and both need a Linux build (WSL or conda), which this machine did not have on
+None of these moves a number a run produces. Item 5 is still open: it needs
+pykep, so a Linux build (WSL or conda), which this machine did not have on
 2026-10-29.
-
----
-
-## F11. A guessed taxonomy is right about half the time, and a guessed C less
-
-Measured on 2026-10-29 with
-[`probe_taxonomy_prior.py`](probe_taxonomy_prior.py), against catalog release
-`data-2026-10-21b`.
-
-The builder (AsteroidCatalog's `enrich.py`) types a body with no class in two
-ways. With a measured albedo, below 0.10 is C and anything else S. With no
-albedo, it takes the albedo its orbit bin assumes and applies the same split,
-which for a NEO means S inside 2.5 AU and C beyond. That second rule types
-1,298,012 bodies, and 38,614 of the 42,775 NEOs.
-
-The probe mirrors both rules from the builder's source, and before measuring
-it checks the mirror against the release itself. It reproduces the class of
-all 83,404 albedo-typed rows and all 1,298,008 albedo_assumed rows within
-4.6 AU. Its numpy multinomial logit recovers known coefficients from 60,000
-synthetic rows to 0.036. Each check failed on a planted defect (the split moved
-to 0.11, and the labels rotated by one class).
-
-Classes are `comp_group` collapsed to four: C-complex, S-complex, X-complex
-and Other. The calibration set is the 169,508 bodies within 4.6 AU whose class
-came from a source, 2,943 of them NEOs.
-
-### Fitted models barely beat the rules
-
-On a 20% hold-out (four classes, so a rule that only says C or S is wrong on
-every X and Other):
-
-```
-orbit model, all     n= 33,766  model acc 51.9%  log loss 1.120 (base rates 1.191)  rule acc 45.4%
-orbit model, NEOs    n=    577  model acc 50.6%  log loss 1.294 (base rates 1.215)  rule acc 47.8%
-albedo model, all    n= 12,720  model acc 70.8%  log loss 0.808 (base rates 1.147)  rule acc 69.7%
-albedo model, NEOs   n=    167  model acc 68.3%  log loss 0.988 (base rates 1.106)  rule acc 70.7%
-```
-
-A measured albedo carries most of the information, and the builder's split
-already captures nearly all of it. Without an albedo, the orbit tells you
-little. On NEOs the fitted orbit model scores worse than plain base rates on
-log loss, and its calibration inverts (rows it gives 0.45 are right 0.55 of
-the time, rows it gives 0.56 are right 0.48). The builder's own split, scored
-as C against everything else, is right for 86.2% of the 64,148 source-typed
-bodies with an albedo, where its docstring records 84.0% on an earlier release
-with an unrecorded scoring rule.
-
-So `MNLogit` is not the prior for NEOs. The probe uses the empirical one: among
-NEOs with a source class, how the true class falls for each class the
-albedo_assumed rule would give.
-
-```
-rule C, H [0.0, 18.0)   n=  156  C 0.308  S 0.455  X 0.090  O 0.147
-rule C, H [18.0, 20.0)  n=  140  C 0.300  S 0.436  X 0.100  O 0.164
-rule C, H [20.0, 22.0)  n=   56  C 0.286  S 0.375  X 0.196  O 0.143
-rule C, pooled          n=  384  C 0.294  S 0.453  X 0.104  O 0.148
-rule S, H [0.0, 18.0)   n=  523  C 0.157  S 0.545  X 0.059  O 0.239
-rule S, H [18.0, 20.0)  n=  838  C 0.193  S 0.529  X 0.103  O 0.175
-rule S, H [20.0, 22.0)  n=  683  C 0.193  S 0.517  X 0.092  O 0.198
-rule S, H [22.0, 25.0)  n=  333  C 0.159  S 0.492  X 0.147  O 0.201
-rule S, H [25.0, 40.0)  n=  182  C 0.137  S 0.544  X 0.187  O 0.132
-rule S, pooled          n=2,559  C 0.177  S 0.525  X 0.103  O 0.195
-```
-
-Where the rule says S, the body is S-complex about half the time. Where it
-says C, it is C-complex 29% of the time and S-complex 45%. The rule C cells
-past H 22 hold 29 and 3 bodies, and the pooled row stands in for them.
-
-### What it does to the value-bearing fractions
-
-Each class's fractions are the mean over its source-typed bodies. Applied to
-the 38,614 albedo_assumed NEOs:
-
-```
-metal  assigned C: point median 0.010  expected median 0.074
-metal  assigned S: point median 0.060  expected median 0.093
-carbon assigned C: point median 0.040  expected median 0.022
-carbon assigned S: point median 0.010  expected median 0.019
-ice    assigned C: point median 0.150  expected median 0.055
-ice    assigned S: point median 0.000  expected median 0.038
-```
-
-The 3,460 NEOs typed C from an assumed albedo carry about three times the ice
-the prior supports. The 35,154 typed S carry none, and the prior gives them
-some. Metal goes up in both, because 10 to 15% of either group is X-complex,
-whose mean metal fraction is 0.373.
-
-### At the top of the ranking
-
-The profitability catalog on disk is from pipeline 1.26.0, run on 2026-09-30,
-and every one of its 604,422 rows loses money. Its order is by profit, so its
-top is the cheapest losing missions. The first 16 rows are NEOs of H 31.5 to
-32.5, about a metre across at the assumed albedo, typed S from an assumed
-albedo. They fall in the H >= 25 bin, which holds 185 NEOs with a measured
-class, two of them at H 30 or fainter. Their P(S) of 0.544 is an
-extrapolation.
-
-```
-top    25:   21 albedo_assumed NEOs   H >= 25.0:   19   P(assigned) median 0.544
-top   100:   61 albedo_assumed NEOs   H >= 25.0:   25   P(assigned) median 0.294
-top 1,000:  364 albedo_assumed NEOs   H >= 25.0:   98   P(assigned) median 0.294
-```
-
-Past the first sixteen, the rows that carry water are mostly C-types from an
-assumed albedo, and the prior gives each of those 0.29.
-
-### Cautions
-
-Bodies with a measured class are not a random sample. Spectroscopic surveys
-reach bright, large and S-type bodies first, so the empirical prior is too
-generous to S and too hard on C. A debiased prior needs a survey model, which
-nothing here has. The direction of F2 survives that caution: a guessed class
-is a coin flip, and the model reports it as a fact. This probe does not say how
-much the ranking moves, because pricing composition as a distribution would
-mean running the value model per class, which is economicspace's job.
-
-No module, config or CSV was touched, and no number a run produces moved.
-
----
-
-## F12. The top of the ranking probably never passed close to the Sun
-
-Measured on 2026-10-29 with [`probe_perihelion.py`](probe_perihelion.py),
-against catalog release `data-2026-10-21b` and the Toliou, Granvik and
-Tsirvoulis (2021) grid, downloaded that day (247,823,013 bytes, sha256
-`8b895c66...a7ad86`, recorded in the probe).
-
-The grid gives, for a NEO's (a, e, i, H), the probability that its population
-ever passed inside each of 26 perihelion thresholds. Below about 0.2 AU,
-heating strips hydrated minerals, so it bears on the water the model credits
-to C-types. Two numbers per body: prospector's expected minimum perihelion,
-and P(q_min < 0.2 AU) from the table's fourth column.
-
-The reader and the expectation are adapted from prospector. The probe
-reproduces prospector 0.4.3's own figures on five bodies to 1.1e-16 AU
-(Bennu 0.569230, Itokawa 0.564210, Ryugu 0.576365, Eros 0.738385, Phaethon
-0.047345). Its lookup snaps each axis to the nearest grid value instead of
-scanning 458,169 rows per body, and it picks a cell exactly as near as
-prospector's full scan on 1,500 sampled catalog NEOs. Both checks failed on
-planted defects. No NEO's expected minimum came out more than 0.05 AU above
-its present perihelion, which a minimum cannot exceed.
-
-```
-NEOs: 42,773   empty-cell fallbacks 451   H outside the grid 15,570
-
-BY COMPOSITION GROUP
-  C-complex           n=  4,585  q_min_exp median 0.675 AU   P(q_min<0.2) median 0.021  mean 0.072   > 0.5 on 2.9%
-  S-complex           n= 37,302  q_min_exp median 0.616 AU   P(q_min<0.2) median 0.005  mean 0.046   > 0.5 on 1.6%
-  X-complex           n=    303  q_min_exp median 0.597 AU   P(q_min<0.2) median 0.044  mean 0.111   > 0.5 on 4.3%
-  credited with ice   n=  4,913  q_min_exp median 0.667 AU   P(q_min<0.2) median 0.022  mean 0.077   > 0.5 on 3.2%
-
-PROFITABILITY RANKING
-  top 25 carrying water        n=   5  P(q_min<0.2) median 0.000  mean 0.001
-  top 100 carrying water       n=  49  P(q_min<0.2) median 0.011  mean 0.014
-  top 1,000 carrying water     n= 364  P(q_min<0.2) median 0.012  mean 0.017   > 0.5 on 0.0%
-```
-
-None of the 364 water-carrying NEOs in the top thousand has better than even
-odds of having passed inside 0.2 AU, and their mean is 1.7%. Across all NEOs
-credited with ice, 3.2% do. The bodies that win are on orbits whose population
-stays well clear of the Sun, which is what a cheap rendezvous would select
-for, so the water credit at the top survives this check. F11 is the larger
-doubt about that water.
-
-Two cautions. The grid's H runs from 15.125 to 24.875, and 15,570 NEOs lie
-outside it, mostly small ones that take its faint edge, including the
-metre-scale bodies that lead the ranking. And the table describes the
-population on a body's orbit, not the body; two bodies on one orbit can have
-had different pasts.
-
-No module, config or CSV was touched, and no number a run produces moved.
-
----
-
-## F13. The bodies that lead the ranking spin too fast to hold loose regolith
-
-Measured on 2026-10-29 with [`probe_spin.py`](probe_spin.py), against catalog
-release `data-2026-10-21b`.
-
-economicspace digs "run-of-mine regolith" from every body it ranks, and reads
-`rotation_period_h` only to size the battery for the night. Nothing asks
-whether the body can hold regolith. A sphere that spins faster than
-sqrt(3 pi / (G rho)), about 2.3 h at 2,000 kg/m^3, cannot keep a loose grain
-on its equator. Faster than Holsapple's (2007) cohesionless limit, a rubble
-pile with a 32 degree friction angle yields unless cohesion holds it.
-
-### prospector's cohesion model has a wrong exponent
-
-The probe adapts prospector's `cohesion.py`, reduced to the sphere, where
-Holsapple's three shape integrals have a closed form. The reduction exposed an
-upstream bug. `_shape_integral` gives the x-axis integrand the exponents
-(1.5, 0.5, 1.5) where Holsapple has (1.5, 0.5, 0.5). For a sphere that returns
-A_x = 0.4 instead of 2/3, and the three integrals sum to 1.733 where they must
-sum to 2. With A_x forced to 0.4, the probe's closed form reproduces
-prospector 0.4.3's own figures on five cases to 2.3e-10, so that exponent is
-the whole difference. With the correct 2/3, a strengthless rubble pile at
-2,000 kg/m^3 survives down to 2.804 h, where upstream says 3.495 h; the closed
-form agrees with a bisection on the cohesion to 1e-6 h. Both checks failed on
-planted defects. On the NEOs with a measured period, upstream's limit would
-call 1,115 of them fast where the corrected one calls 882.
-
-### What the measured periods say
-
-```
-NEOs: 42,775   with a measured period, density and size: 2,437
-  lift period         median 2.009 h   faster than it: 810 (33.2%)
-  cohesionless period median 2.414 h   faster than it: 882 (36.2%)
-  cohesion the fast ones need: median 23.33 Pa  p90 1286.1 Pa  max 309566 Pa;  over 100 Pa: 281
-
-  by H (measured periods):
-    H [0, 18)      n=  573  median period    5.786 h   faster than lift   2.6%
-    H [18, 20)     n=  601  median period    7.000 h   faster than lift   4.5%
-    H [20, 22)     n=  435  median period    6.270 h   faster than lift  17.0%
-    H [22, 25)     n=  452  median period    0.372 h   faster than lift  74.6%
-    H [25, 28)     n=  325  median period    0.089 h   faster than lift  94.2%
-    H [28, 40)     n=   51  median period    0.024 h   faster than lift 100.0%
-```
-
-A third of the NEOs with a measured period cannot hold loose material on
-their equator. Past H 22, most cannot; past H 28, every one of the 51 measured
-spins in under two minutes at the median.
-
-### At the top of the ranking
-
-None of the top 25 rows has a measured period, and only 21 of the 407 NEOs in
-the top thousand do (two of them faster than the lift period). The first 16
-rows are bodies of H 31.5 to 32.5, about a metre across. Prospector's way to
-fill a missing period is the share of bodies within 0.75 mag of the same H,
-and at H 32 that window holds one or two measured bodies, too few to use. The
-nearest measured population is the H >= 28 bin, where all 51 spin faster than
-the lift period, at a median of 1.4 minutes. Bodies four magnitudes fainter
-are smaller still, and small bodies spin faster. The metre-scale bodies that
-lead the ranking are almost certainly bare, fast-spinning rock with no loose
-layer to dig.
-
-What that costs the model, this probe cannot say. It may mean a different
-excavation method, or no mission at all, and either is a modelling decision
-in economicspace. The cohesion they would need is small (a metre-scale body
-spinning once a minute needs about 1 Pa), so they need not fly apart. What they
-lack is the loose surface layer the excavation model assumes.
-
-### Cautions
-
-Lightcurve surveys find short periods more easily than long ones on small,
-faint bodies, so the measured fast share at faint H is likely an overestimate.
-At H >= 25 it is above 94%, so that would need to be very large to change the
-reading. Every body is treated as a sphere of its catalog density estimate.
-An elongated body sheds material from the tips of its long axis at a somewhat
-slower spin than a sphere does.
-
-No module, config or CSV was touched, and no number a run produces moved.
-
----
-
-## F14. Orbit uncertainty barely moves delta-v; it moves where the body is
-
-Measured on 2026-10-29 with [`probe_covariance.py`](probe_covariance.py),
-against catalog release `data-2026-10-21b` and NEODyS as served that day.
-
-SPACE-MAP.md found poorly determined orbits enriched 3.1x at the top of the
-ranking and left open how to respond. F9 proposed pushing NEODyS's orbit
-covariance through the delta-v estimator to get an error bar. The probe
-fetches the Keplerian elements and 6x6 covariance of every NEO in the top 100
-rows (69 bodies, all found), draws 4,000 times from the Gaussian on (a, e, i),
-and prices each draw with the shipped estimator.
-
-Before measuring, the shipped copy reproduces the five docstring figures to
-0.0081 km/s. For every body fetched, the square roots of the parsed
-covariance's diagonal match the RMS line NEODyS prints, to 4.5e-04 at worst.
-That check failed when the 21 upper-triangle values were planted in
-column-major order.
-
-```
-DELTA-V UNCERTAINTY  (shipped dv_out, 5th-95th percentile, 4,000 draws each)
-  90% interval width: median 0.001 km/s   p90 0.088   max 4.443
-  wider than 0.1 km/s:   6 of 69
-  wider than 0.5 km/s:   2 of 69
-  wider than 1.0 km/s:   2 of 69
-  draws rejected as unbound or unphysical: median 0.00%   max 79.3%
-  spread of nominal dv across these bodies: IQR 1.306 km/s (6.108 to 7.414)
-
-  by orbit condition code:
-    U 0-2  n= 19  width90 median    0.000 km/s   max    0.000
-    U 3-4  n=  4  width90 median    0.000 km/s   max    0.000
-    U 5-6  n= 16  width90 median    0.000 km/s   max    0.006
-    U 7-9  n= 30  width90 median    0.035 km/s   max    4.443
-```
-
-For 67 of the 69, the 90% interval on `dv_out` is under 0.5 km/s, and for
-most it is a few metres per second, well inside the 1.3 km/s spread between
-bodies. Even at U 7 to 9 the median width is 35 m/s. The two exceptions are
-U 9 with one-day arcs: 2015 KW157, 5.30 to 9.74 km/s, and 2000 EA116, where
-79% of the draws are not bound orbits at all.
-
-The reason is in the covariance. 2022 FB21, rank 1 at U 8, has its semi-major
-axis to 0.002 AU, its eccentricity to 0.0012 and its inclination to 0.019
-degrees, but its mean anomaly only to 2.2 degrees at an epoch in 2026. A short
-arc taken at a close approach fixes the orbit's size, shape and tilt well. What
-it leaves loose is where along the orbit the body is, and the closed-form
-estimator never looks at that.
-
-So the answer to SPACE-MAP.md's open question is narrower than F9 hoped. An
-error bar on delta-v is cheap, and for almost every body at the top it is
-negligible. What a poor orbit actually threatens is finding the body again: a
-metre-scale object whose position along its orbit is uncertain by degrees today
-can be lost within a few apparitions. That is a recovery and targeting cost,
-which nothing in the model represents, and an arc floor or a U cutoff is the
-crude stand-in for it.
-
-### Cautions
-
-A Gaussian on Keplerian elements is a linearisation, and for the one-day arcs
-it is a poor one; their intervals mean "badly known", not a calibrated 90%.
-Only (a, e, i) are drawn, because only they enter the estimator. NEODyS
-elements are its own fit at its own epoch, so the nominal figures differ a
-little from the catalog's.
-
-No module, config or CSV was touched, and no number a run produces moved.
 
 ## Licence position
 

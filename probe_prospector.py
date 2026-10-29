@@ -50,6 +50,7 @@ import argparse
 import numpy as np
 import pandas as pd
 
+import snapshots
 from probe_nhats import (
     DEFAULT_CATALOG,
     REFERENCE,
@@ -266,6 +267,7 @@ def main():
     if not check_reference() or not check_upstream():
         return
 
+    print("\n" + snapshots.describe())
     cat = load_catalog(args.catalog)
     print(f"\ncatalog: {len(cat):,} usable rows")
     n = fetch_nhats()

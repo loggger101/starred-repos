@@ -31,7 +31,8 @@ Two traps this probe is written around, both hit while building it:
      out. It goes through Int64 here, per the merge-key rule in economicspace's
      CLAUDE.md. That is the NEOWISE defect wearing a different hat.
 
-This script READS ONLY. It fetches two public read-only APIs, does not import
+This script READS ONLY. It fetches two public read-only APIs (recorded, or
+replayed, through snapshots.py), does not import
 master, does not build a stage, and does not write to `asteroid_pipeline/`, so
 it cannot invalidate a `.verify` baseline.
 
@@ -43,10 +44,11 @@ Usage:
 
 import argparse
 import json
-import urllib.request
 
 import numpy as np
 import pandas as pd
+
+import snapshots
 
 # Mirrored from modules/calc.py, for the reason probe_plane_change.py gives:
 # importing calc.py fires its INSTALLATION block, which pip-installs into the
@@ -147,8 +149,7 @@ def load_catalog(path):
 
 def fetch_nhats():
     """JPL's optimised round-trip delta-v per NEA."""
-    with urllib.request.urlopen(NHATS_URL, timeout=180) as fh:
-        rows = json.load(fh)["data"]
+    rows = json.loads(snapshots.fetch(NHATS_URL))["data"]
     n = pd.DataFrame(rows)
     n["nhats_dv"] = n["min_dv"].apply(
         lambda x: float(x["dv"]) if isinstance(x, dict) else np.nan)
@@ -170,8 +171,7 @@ def fetch_asterank():
     string. Keying on the provisional designation as well is what lets the
     unnumbered bodies join, and they are most of the NHATS set.
     """
-    with urllib.request.urlopen(ASTERANK_URL, timeout=180) as fh:
-        d = pd.DataFrame(json.load(fh))
+    d = pd.DataFrame(json.loads(snapshots.fetch(ASTERANK_URL)))
     d["dv_sh"] = pd.to_numeric(d["dv"], errors="coerce")
     numbered = pd.to_numeric(d["pdes"], errors="coerce").astype("Int64").astype(str)
     provisional = d["prov_des"].astype(str).str.strip()
@@ -250,6 +250,7 @@ def main():
     if not check_reference():
         return
 
+    print("\n" + snapshots.describe())
     cat = load_catalog(args.catalog)
     print(f"\ncatalog: {len(cat):,} usable rows")
 

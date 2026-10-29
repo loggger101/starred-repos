@@ -1,7 +1,8 @@
 # What can be checked without an economicspace checkout.  The probes need its
 # installed catalog, so CI does not run them; it checks that they still
-# compile, that the archival table is the bytes its citation names, that text
-# files are LF, and that the notes' relative links and anchors resolve.
+# compile, that their self-checks pass and fail on planted defects, that the
+# archival table is the bytes its citation names, that text files are LF, and
+# that the notes' relative links and anchors resolve.
 name: check
 
 on:
@@ -24,6 +25,16 @@ jobs:
 
       - name: Probes compile
         run: python -m py_compile $(git ls-files '*.py')
+
+      # Each probe's self-check (a shipped or upstream figure reproduced, a
+      # known answer recovered), and each check failing on a planted defect.
+      # None needs an economicspace checkout; the few that need a local
+      # download skip here.  See tests/README.md.
+      - name: Install numpy and pandas
+        run: python -m pip install -r requirements.txt
+
+      - name: Self-checks and planted defects
+        run: python -m unittest discover -s tests -t . -v
 
       # The sha256 recorded in CITATIONS.md section 2.  sdsstax_ast.tab is
       # committed verbatim (`-text` in .gitattributes), so any change to it is

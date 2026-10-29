@@ -42,11 +42,11 @@ Usage:
 import argparse
 import time
 import urllib.error
-import urllib.request
 
 import numpy as np
 import pandas as pd
 
+import snapshots
 from probe_nhats import check_reference, dv_out_shipped
 
 NEODYS_URL = "https://newton.spacedys.com/~neodys2/epoch/{}.ke1"
@@ -87,8 +87,7 @@ def fetch(designation):
     """One body's NEODyS file, or (None, reason)."""
     url = NEODYS_URL.format(packed(designation))
     try:
-        with urllib.request.urlopen(url, timeout=60) as fh:
-            return parse(fh.read().decode("utf-8", errors="replace")), None
+        return parse(snapshots.fetch(url, timeout=60).decode("utf-8", errors="replace")), None
     except urllib.error.HTTPError as err:
         return None, f"HTTP {err.code}"
     except (urllib.error.URLError, TimeoutError) as err:
@@ -138,12 +137,14 @@ def main():
     prof["rank"] = np.arange(1, len(prof) + 1)
     top = prof.merge(cat, on="designation", how="inner")
     print(f"\ntop {args.top} rows of the ranking: {len(top)} NEOs; fetching NEODyS")
+    print(f"  {snapshots.describe()}")
 
     rng = np.random.default_rng(args.seed)
     rows, misses, worst_rms = [], {}, 0.0
     for _, b in top.iterrows():
         orbit, why = fetch(b.designation)
-        time.sleep(PAUSE_S)
+        if not snapshots.replay_folder():
+            time.sleep(PAUSE_S)
         if orbit is None:
             misses[why or "unparsed"] = misses.get(why or "unparsed", 0) + 1
             continue

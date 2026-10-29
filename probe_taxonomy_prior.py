@@ -168,6 +168,31 @@ def features(df, with_albedo):
     return np.column_stack(cols)
 
 
+def check_builder(cat):
+    """The mirrored rules must give the class the builder actually assigned.
+
+    `cat` needs `spectral_type_source`, `comp_group`, `albedo`,
+    `semi_major_axis_au` and a boolean `neo`.
+    """
+    print("\nBUILDER CHECK  the mirrored rules against the classes the release assigned")
+    ok = True
+    for source, guess in (
+            ("albedo", lambda d: rule_class(d.albedo.to_numpy(float))),
+            ("albedo_assumed", lambda d: rule_class(assumed_albedo(
+                d.semi_major_axis_au.to_numpy(float), d.neo.to_numpy(bool))))):
+        d = cat[cat["spectral_type_source"].eq(source)]
+        if d.empty:
+            print(f"  {source:15s} no rows")
+            ok = False
+            continue
+        same = np.asarray(CLASSES)[guess(d)] == collapse(d["comp_group"])
+        print(f"  {source:15s} {int(same.sum()):9,} / {len(d):9,}  ({same.mean() * 100:.3f}%)")
+        ok &= bool(same.mean() > 0.999)
+    if not ok:
+        print("  MISMATCH -- these are not the builder's rules")
+    return ok
+
+
 def collapse(group):
     g = group.astype(str)
     return np.where(g.isin(CLASSES[:3]), g, "Other")
@@ -231,19 +256,7 @@ def main():
           f"  ({int(src.neo.sum()):,} NEOs)")
     print("  " + "  ".join(f"{c} {int((src.y == j).sum()):,}" for j, c in enumerate(CLASSES)))
 
-    # The mirrored rules must give the class the builder actually assigned.
-    print("\nBUILDER CHECK  the mirrored rules against the classes the release assigned")
-    ok = True
-    for source, guess in (
-            ("albedo", lambda d: rule_class(d.albedo.to_numpy(float))),
-            ("albedo_assumed", lambda d: rule_class(assumed_albedo(
-                d.semi_major_axis_au.to_numpy(float), d.neo.to_numpy(bool))))):
-        d = cat[cat["spectral_type_source"].eq(source)]
-        same = np.asarray(CLASSES)[guess(d)] == collapse(d["comp_group"])
-        print(f"  {source:15s} {int(same.sum()):9,} / {len(d):9,}  ({same.mean() * 100:.3f}%)")
-        ok &= same.mean() > 0.999
-    if not ok:
-        print("  MISMATCH -- these are not the builder's rules")
+    if not check_builder(cat):
         return
 
     alb = src[(src["albedo"] > 0) & (src["albedo"] < 1)]
