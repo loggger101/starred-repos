@@ -123,6 +123,7 @@ def check_reference():
     worst = r["A_minus_docstring"].abs().max()
     print(f"\n  worst |model A - docstring| = {worst:.4f} km/s "
           f"({'OK' if worst < 0.01 else 'MISMATCH -- this probe is not the shipped model'})")
+    return bool(worst < 0.01)
 
 
 def survey(df, label, stride=40):
@@ -167,7 +168,8 @@ def survey(df, label, stride=40):
 
 def main():
     """Run the reference check, then the catalog survey."""
-    check_reference()
+    if not check_reference():
+        return
     path = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_CATALOG
     cols = ["semi_major_axis_au", "eccentricity", "inclination_deg"]
     df = pd.read_csv(path, usecols=cols, low_memory=False)

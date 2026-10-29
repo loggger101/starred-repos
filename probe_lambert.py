@@ -102,6 +102,51 @@ def shipped_dv_out(a_au, e, i_deg):
     return best
 
 
+def check_reference():
+    """`shipped_dv_out` must reproduce asteroid_transfer_dv_km_s's five docstring figures.
+
+    Added 2026-10-29: CLAUDE.md asks every pricing probe to do this before it
+    measures anything, and this one predates the rule.
+    """
+    from probe_nhats import REFERENCE
+    worst = 0.0
+    print("REFERENCE BODIES  (shipped_dv_out must reproduce the docstring)")
+    for r in REFERENCE.itertuples():
+        dv = shipped_dv_out(r.semi_major_axis_au, r.eccentricity, r.inclination_deg)
+        worst = max(worst, abs(dv - r.docstring_dv_out))
+        print(f"  {r.body:14s} {dv:8.4f}  docstring {r.docstring_dv_out:6.2f}")
+    ok = worst < 0.01
+    print(f"  worst |model - docstring| = {worst:.4f} km/s "
+          f"({'OK' if ok else 'MISMATCH -- this probe is not the shipped model'})")
+    return ok
+
+
+# Orbits the solver check flies: (a AU, e, i deg, RAAN deg, argp deg, M0 deg,
+# time of flight in days). Each is short of one revolution, so the zero-rev
+# prograde solution is the orbit itself.
+SOLVER_CASES = [
+    (1.000, 0.017, 0.0, 0.0, 102.9, 0.0, 120.0),
+    (1.126, 0.204, 6.0, 2.1, 66.2, 40.0, 200.0),
+    (2.700, 0.100, 10.0, 80.0, 30.0, 300.0, 600.0),
+    (1.458, 0.223, 10.8, 304.3, 178.9, 100.0, 330.0),
+]
+
+
+def check_solver(tol_km_s=1e-6):
+    """`lambert_izzo` must recover the velocities of an orbit from two of its positions."""
+    worst = 0.0
+    for a, e, i, raan, argp, M0, tof_d in SOLVER_CASES:
+        el = (a * ob.AU_KM, e, np.radians(i), np.radians(raan), np.radians(argp), np.radians(M0))
+        r1, v1 = ob.propagate_elements(*el, 0.0)
+        r2, v2 = ob.propagate_elements(*el, tof_d * ob.DAY_S)
+        s1, s2 = ob.lambert_izzo(r1.ravel(), r2.ravel(), tof_d * ob.DAY_S)
+        worst = max(worst, np.abs(s1 - v1.ravel()).max(), np.abs(s2 - v2.ravel()).max())
+    ok = worst < tol_km_s
+    print(f"SOLVER  lambert_izzo round trip on {len(SOLVER_CASES)} orbits: worst velocity gap"
+          f" {worst:.1e} km/s ({'OK' if ok else 'MISMATCH -- the Lambert solver is wrong'})")
+    return ok
+
+
 def oracle_dv_out(row, n_dep=40, n_tof=34, tof_lo_yr=0.25, tof_hi_yr=4.0):
     """Minimum two-impulse outbound delta-v over a departure x TOF porkchop."""
     a = float(row.semi_major_axis_au) * ob.AU_KM
@@ -149,6 +194,10 @@ def main():
     ap.add_argument("--n", type=int, default=250, help="bodies to sample")
     ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()
+
+    if not check_reference() or not check_solver():
+        return
+    print()
 
     cols = ["designation", "semi_major_axis_au", "eccentricity", "inclination_deg",
             "longitude_asc_node_deg", "arg_perihelion_deg", "mean_anomaly_deg", "is_neo"]

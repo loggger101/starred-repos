@@ -10,21 +10,48 @@ citations for the pipeline itself; the section numbers here follow it.
 ## 1. Sources read only by the probes
 
 None of these is an economicspace pipeline input. No stage fetches them and
-none of them reaches a CSV; they are the external oracles
-[`SECOND-PASS.md`](SECOND-PASS.md) measures the model against.
+none of them reaches a CSV; they are the external oracles and tables
+[`SECOND-PASS.md`](SECOND-PASS.md), [`THIRD-PASS.md`](THIRD-PASS.md) and
+[`FOURTH-PASS.md`](FOURTH-PASS.md) measure the model against.
 
 - NASA JPL NHATS, `https://ssd-api.jpl.nasa.gov/nhats.api`. Optimised
   round-trip delta-v and mission duration for the near-Earth asteroids
   accessible to human spaceflight. Read by
   `probe_nhats.py` and `probe_prospector.py`.
-- NASA JPL Horizons, `https://ssd.jpl.nasa.gov/api/horizons.api`, and the
-  NAIF kernel archive. Recommended in F7 for bounding the two-body error in
-  F4's Lambert oracle; not yet used.
+- NASA JPL Horizons, `https://ssd.jpl.nasa.gov/api/horizons.api`. Recommended
+  in F7, with the NAIF kernel archive, for bounding the two-body error in F4's
+  Lambert oracle. Read by `probe_horizons.py` (F19): heliocentric ecliptic
+  J2000 state vectors and osculating elements, two requests per body and one
+  for Earth. The kernels were not needed.
 - NEODyS (University of Pisa and SpaceDyS),
   `https://newton.spacedys.com/neodys/`. Per-object orbital elements with the
   full 6x6 covariance. Recommended in F9; read by `probe_covariance.py` (F14)
-  from `https://newton.spacedys.com/~neodys2/epoch/<designation>.ke1`, one
-  request per body.
+  and `probe_recovery.py` (F15) from
+  `https://newton.spacedys.com/~neodys2/epoch/<designation>.ke1`, one request
+  per body. `tests/fixtures/neodys_2000SG344.ke1` is one such file, as served
+  on 2026-10-29.
+- NEOWISE Diameters and Albedos V2.0 (Mainzer et al.), table `neowisesbpropv2`
+  at the IRSA TAP service, `https://irsa.ipac.caltech.edu/TAP/sync`. The
+  builder already reads it; `probe_albedo_coverage.py` (F16) re-reads all of it
+  to check the merge.
+
+  > Mainzer, A. K., Bauer, J. M., Cutri, R. M., et al. (2019). *NEOWISE
+  > Diameters and Albedos V2.0.* NASA Planetary Data System,
+  > urn:nasa:pds:neowise_diameters_albedos::2.0.
+
+- SsODNet datacloud (IMCCE, Observatoire de Paris),
+  `https://ssp.imcce.fr/webservices/ssodnet/api/datacloud.php`, resource
+  `diamalbedo`. Every published diameter and albedo for a body. Read by
+  `probe_albedo_coverage.py` (F16), one request per body; it answers a name
+  with every body that name resolves to, so the probe keeps only the body asked
+  for.
+
+  > Berthier, J., Carry, B., Mahlke, M., and Normand, J. (2023). *SsODNet:
+  > Solar system Open Database Network.* A&A, 671, A151.
+
+- JPL Horizons, NEODyS, IRSA and SsODNet answers read on a given day are
+  recorded under `~/.cache/starred-repos/snapshots/<date>/` by `snapshots.py`,
+  with a manifest of URLs and sha256s. They are not committed.
 - Asterank, `http://www.asterank.com/api/asterank`, MIT. Used for its `dv`
   column only, which is the Shoemaker-Helin closed-form delta-v
   approximation. Its economic columns return degenerate values through the
@@ -47,6 +74,31 @@ none of them reaches a CSV; they are the external oracles
   to a cache outside this checkout and checks it against the sha256 of the
   2026-10-29 download, `8b895c663b461054a86ecd43ee17dfc0b84e3278c96fd753a29bf19d68a7ad86`
   (247,823,013 bytes). Not committed. Cite the paper if F12 is used.
+- Granvik et al. (2018), the low-resolution NEO model with source-region and
+  albedo probabilities,
+  `https://www.mv.helsinki.fi/home/mgranvik/data/Granvik+_2018_Icarus/Granvik+_2018_Icarus_model_lowres_v20181213_albedo_cp.out.gz`.
+  Read by `probe_source_regions.py` (F17), which downloads it to a cache
+  outside this checkout and checks it against the sha256 of the 2026-10-29
+  download, `81e26f962f2573edb098ffae2d7bf254588ba2e6382bd3157e9ad10e057de42d`
+  (33,342,324 bytes). Not committed.
+
+  > Granvik, M., Morbidelli, A., Jedicke, R., Bolin, B., Bottke, W. F.,
+  > Beshore, E., Vokrouhlicky, D., Nesvorny, D., and Michel, P. (2018).
+  > *Debiased orbit and absolute-magnitude distributions for near-Earth
+  > objects.* Icarus, 312, 181-207.
+
+- The Asteroid Lightcurve Database (Warner, Harris and Pravec), summary table
+  `lc_summary_pub.txt` from `https://minplanobs.org/MPInfo/datazips/LCLIST_PUB_CURRENT.zip`,
+  release of 2023-10-01, found through space-datasets' `update-lcdb.py` (F8).
+  Read by `probe_lightcurves.py` (F18), which reads the layout from the
+  table's own header and checks the zip against the sha256 of the 2026-10-29
+  download, `1a200680375897fbd62143572b2078137a0d42b170eabb764b1b1eef620640e2`
+  (39,966,552 bytes). Not committed, except the header and four rows in
+  `tests/fixtures/lcdb_sample.txt`.
+
+  > Warner, B. D., Harris, A. W., and Pravec, P. (2009). *The asteroid
+  > lightcurve database.* Icarus, 202(1), 134-146.
+
 - Lowell Observatory AstorbDB, `https://astorbdb.lowell.edu/v1/graphql`.
   Per-survey albedo, taxonomy and lightcurve determinations. Recommended in
   [`THIRD-PASS.md`](THIRD-PASS.md); not yet used.
@@ -229,6 +281,22 @@ Validated against a published worked example:
 
 Agreement is 7.4e-07 km/s, which is the precision the reference is quoted to.
 See [`FINDINGS.md`](FINDINGS.md) F4.
+
+### Apparent magnitude
+
+`probe_recovery.py` (F15) predicts a body's V magnitude with the H, G system
+at G = 0.15:
+
+> Bowell, E., Hapke, B., Domingue, D., Lumme, K., Peltoniemi, J., and Harris,
+> A. W. (1989). *Application of photometric models to asteroids.* In Asteroids
+> II, pp. 524-556. University of Arizona Press.
+
+### Multinomial logistic regression, and Hermite interpolation
+
+`probe_taxonomy_prior.py` (F11) fits a multinomial logit by Newton-Raphson,
+and `probe_horizons.py` (F19) interpolates state vectors with cubic Hermite
+splines. Both are textbook methods written from their definitions; nothing
+was taken from statsmodels or any other implementation.
 
 ### Kepler's equation
 

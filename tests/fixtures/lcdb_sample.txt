@@ -1,0 +1,9 @@
+ASTEROID LIGHTCURVE DATABASE (LCDB) SUMMARY (Complete)
+GENERATED: Oct 01, 2023
+
+NUMBER    NAME                           DESIG                FAM      S CLASS      S F DIA.     S H      B  S G      G1     G2     S F ALBEDO F PERIOD        P DESC          F AMIN AMAX U  NOTES BIN SAM SurvA NEX PRI
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      1   Ceres                                               9106     S C          L    939.4   M  3.53     A  0.12                D   0.0775 S    9.07417                      0.03 0.06 3             Y               
+  25143   Itokawa                        1998 SF36            9101     A S*         L      0.378 L 19.48     A  0.24                A   0.2        12.132                        0.69 1.45 3  T-         Y               
+ 101955   Bennu                          1999 RQ36            9101     A S*         L      0.213 L 20.72     A  0.24                A   0.2         4.2968                       0.1  0.35 3             Y               
+      0   2008 TC3                       2008 TC3             9101     A S*         L      0.002 L 30.9      A  0.24                A   0.2         0.0269409                    0.24 1.02 3  T          Y               

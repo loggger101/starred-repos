@@ -1,0 +1,104 @@
+{
+  "_about": "Headline figures as the notes record them, and how run_all.py reads each one back out of its probe's output. A figure belongs to the release it was taken on (CLAUDE.md), so a re-run is compared against it, never written over it. `pattern` is a regular expression whose first group is the number; thousands separators are dropped before it is parsed.",
+  "probes": {
+    "plane_change": {"script": "probe_plane_change.py", "args": [], "slow": false},
+    "taxonomy":     {"script": "probe_taxonomy.py", "args": [], "slow": false},
+    "lambert":      {"script": "probe_lambert.py", "args": ["--n", "400", "--seed", "1"], "slow": true},
+    "nhats":        {"script": "probe_nhats.py", "args": ["--asterank"], "slow": false, "network": true},
+    "prospector":   {"script": "probe_prospector.py", "args": [], "slow": false, "network": true},
+    "taxonomy_prior": {"script": "probe_taxonomy_prior.py", "args": [], "slow": false},
+    "perihelion":   {"script": "probe_perihelion.py", "args": [], "slow": false},
+    "spin":         {"script": "probe_spin.py", "args": [], "slow": false},
+    "covariance":   {"script": "probe_covariance.py", "args": [], "slow": false, "network": true},
+    "recovery":     {"script": "probe_recovery.py", "args": ["--start", "2026-10-29"], "slow": false, "network": true},
+    "albedo_coverage": {"script": "probe_albedo_coverage.py", "args": [], "slow": false, "network": true},
+    "source_regions": {"script": "probe_source_regions.py", "args": [], "slow": false},
+    "lightcurves":  {"script": "probe_lightcurves.py", "args": [], "slow": false},
+    "horizons":     {"script": "probe_horizons.py", "args": [], "slow": false, "network": true}
+  },
+  "figures": [
+    {"probe": "plane_change", "finding": "F1", "note": "FINDINGS.md", "recorded_on": "2026-09-03",
+     "label": "survey rows (1-in-40 stride)", "pattern": "FULL CATALOG  \\(n = ([\\d,]+)", "recorded": 38892},
+    {"probe": "plane_change", "finding": "F1", "note": "FINDINGS.md", "recorded_on": "2026-09-03",
+     "label": "A, shipped placement, median km/s", "pattern": "A  all-at-departure \\(shipped\\) : median\\s+([\\d.]+)", "recorded": 9.904},
+    {"probe": "plane_change", "finding": "F1", "note": "FINDINGS.md", "recorded_on": "2026-09-03",
+     "label": "saving A-C, median km/s", "pattern": "saving A-C\\s+median\\s+([\\d.]+)", "recorded": 0.4692},
+
+    {"probe": "taxonomy", "finding": "F2", "note": "FINDINGS.md", "recorded_on": "2026-09-03",
+     "label": "comp_group agreement with SDSS, %", "pattern": "comp_group  agrees  : [\\d,]+ / [\\d,]+  \\(([\\d.]+)%\\)", "recorded": 66.1},
+
+    {"probe": "lambert", "finding": "F4", "note": "FINDINGS.md", "recorded_on": "2026-09-03",
+     "label": "oracle minus shipped, median km/s", "pattern": "gap \\(oracle-shipped\\): median\\s+([+\\-\\d.]+)", "recorded": 1.296},
+
+    {"probe": "nhats", "finding": "F6", "note": "SECOND-PASS.md", "recorded_on": "2026-09-04",
+     "label": "NHATS bodies joined", "pattern": "joined : ([\\d,]+)", "recorded": 7006},
+    {"probe": "nhats", "finding": "F6", "note": "SECOND-PASS.md", "recorded_on": "2026-09-04",
+     "label": "shipped vs NHATS, Spearman", "pattern": "rank agreement with JPL \\(Spearman\\) : ([\\d.]+)", "recorded": 0.5976},
+    {"probe": "nhats", "finding": "F6", "note": "SECOND-PASS.md", "recorded_on": "2026-09-04",
+     "label": "one-way legs above JPL's round trip", "pattern": "ONE-WAY EXCEEDS ROUND TRIP    : ([\\d,]+)", "recorded": 14},
+    {"probe": "nhats", "finding": "F6", "note": "SECOND-PASS.md", "recorded_on": "2026-09-04",
+     "label": "shipped vs Shoemaker-Helin, Spearman", "pattern": "rank agreement \\(Spearman\\) : ([\\d.]+)", "recorded": 0.9494},
+
+    {"probe": "prospector", "finding": "F10", "note": "THIRD-PASS.md", "recorded_on": "2026-10-29",
+     "label": "prospector vs NHATS, Spearman", "pattern": "  prospector\\s+[\\d.]+\\s+([\\d.]+)", "recorded": 0.7593},
+    {"probe": "prospector", "finding": "F10", "note": "THIRD-PASS.md", "recorded_on": "2026-10-29",
+     "label": "B_leo vs NHATS, Spearman", "pattern": "  B_leo\\s+[\\d.]+\\s+([\\d.]+)", "recorded": 0.3157},
+    {"probe": "prospector", "finding": "F10", "note": "THIRD-PASS.md", "recorded_on": "2026-10-29",
+     "label": "bodies where B_leo is cheaper than shipped", "pattern": "B_leo cheaper than shipped on ([\\d,]+)", "recorded": 0},
+
+    {"probe": "taxonomy_prior", "finding": "F11", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
+     "label": "NEOs the rule calls C that are C-complex (pooled)", "pattern": "rule C, pooled\\s+n=\\s*[\\d,]+\\s+C ([\\d.]+)", "recorded": 0.294},
+    {"probe": "taxonomy_prior", "finding": "F11", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
+     "label": "NEOs the rule calls S that are S-complex (pooled)", "pattern": "rule S, pooled\\s+n=\\s*[\\d,]+\\s+C [\\d.]+\\s+S ([\\d.]+)", "recorded": 0.525},
+    {"probe": "taxonomy_prior", "finding": "F11", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
+     "label": "held-out NEOs, orbit model log loss", "pattern": "orbit model, NEOs\\s+n=\\s*[\\d,]+\\s+model acc\\s+[\\d.]+%\\s+log loss ([\\d.]+)", "recorded": 1.294},
+
+    {"probe": "perihelion", "finding": "F12", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
+     "label": "top 1,000 carrying water, mean P(q_min<0.2)", "pattern": "top 1,000 carrying water\\s+n=\\s*[\\d,]+\\s+q_min_exp median [\\d.]+ AU\\s+P\\(q_min<0.2\\) median [\\d.]+\\s+mean ([\\d.]+)", "recorded": 0.017},
+    {"probe": "perihelion", "finding": "F12", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
+     "label": "NEOs credited with ice, P(q_min<0.2) > 0.5, %", "pattern": "credited with ice\\s+n=.*> 0.5 on\\s+([\\d.]+)%", "recorded": 3.2},
+
+    {"probe": "spin", "finding": "F13", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
+     "label": "NEOs with a period faster than the lift period, %", "pattern": "lift period\\s+median [\\d.]+ h\\s+faster than it: [\\d,]+ \\(([\\d.]+)%\\)", "recorded": 33.2},
+    {"probe": "spin", "finding": "F13", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
+     "label": "H >= 28 faster than the lift period, %", "pattern": "H \\[28, 40\\)\\s+n=\\s*[\\d,]+\\s+median period\\s+[\\d.]+ h\\s+faster than lift\\s+([\\d.]+)%", "recorded": 100.0},
+
+    {"probe": "covariance", "finding": "F14", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
+     "label": "top-100 NEOs with a dv_out interval wider than 0.5 km/s", "pattern": "wider than 0.5 km/s:\\s+([\\d,]+) of", "recorded": 2},
+    {"probe": "covariance", "finding": "F14", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
+     "label": "top-100 NEOs fetched from NEODyS", "pattern": "fetched ([\\d,]+); missing", "recorded": 69},
+
+    {"probe": "recovery", "finding": "F15", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
+     "label": "top-100 NEOs recoverable before 2036", "pattern": "  recoverable\\s+([\\d,]+)\\s+median H", "recorded": 21},
+    {"probe": "recovery", "finding": "F15", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
+     "label": "top-100 NEOs with no observable window before 2036", "pattern": "  no window\\s+([\\d,]+)\\s+median H", "recorded": 42},
+    {"probe": "recovery", "finding": "F15", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
+     "label": "10-year mean-anomaly drift vs U, Spearman", "pattern": "against the catalog's U, Spearman: ([\\d.]+)", "recorded": 0.979},
+
+    {"probe": "albedo_coverage", "finding": "F16", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
+     "label": "albedo_assumed NEOs with a NEOWISE V2.0 albedo", "pattern": "albedo_assumed NEOs with a NEOWISE V2.0 albedo: ([\\d,]+)", "recorded": 0},
+    {"probe": "albedo_coverage", "finding": "F16", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
+     "label": "NEOWISE join check, NEOs found again, %", "pattern": "found again: [\\d,]+ / [\\d,]+ \\(([\\d.]+)%\\)", "recorded": 95.5},
+    {"probe": "albedo_coverage", "finding": "F16", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
+     "label": "top-1,000 guessed NEOs with a datacloud albedo", "pattern": "top 1,000  n=\\s*[\\d,]+\\s+with any albedo\\s+([\\d,]+)", "recorded": 0},
+
+    {"probe": "source_regions", "finding": "F17", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
+     "label": "guessed NEOs the model expects to be dark", "pattern": "the model expects ([\\d,]+) \\(", "recorded": 5238},
+    {"probe": "source_regions", "finding": "F17", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
+     "label": "guessed Cs the model disagrees with", "pattern": "assigned C-complex\\s+n=\\s*[\\d,]+.*disagrees.*on ([\\d,]+)", "recorded": 2959},
+    {"probe": "source_regions", "finding": "F17", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
+     "label": "measured-albedo NEOs, observed dark fraction", "pattern": "dark \\(albedo <= 0.1\\): observed ([\\d.]+)", "recorded": 0.384},
+
+    {"probe": "lightcurves", "finding": "F18", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
+     "label": "NEOs with a reliable LCDB period", "pattern": "with a reliable LCDB period \\(U >= 2, no limit flag\\) ([\\d,]+)", "recorded": 1955},
+    {"probe": "lightcurves", "finding": "F18", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
+     "label": "LCDB periods the catalog lacks", "pattern": "LCDB periods for NEOs the catalog has none for: ([\\d,]+)", "recorded": 0},
+    {"probe": "lightcurves", "finding": "F18", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
+     "label": "reliable periods faster than lift, %", "pattern": "  all     n=\\s*[\\d,]+\\s+faster than lift ([\\d.]+)%", "recorded": 25.6},
+
+    {"probe": "horizons", "finding": "F19", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
+     "label": "oracle two-body error, median |delta| km/s, all", "pattern": "  all\\s+n=\\s*\\d+\\s+median [+\\-\\d.]+\\s+mean [+\\-\\d.]+\\s+median \\|delta\\| ([\\d.]+)", "recorded": 0.0035},
+    {"probe": "horizons", "finding": "F19", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
+     "label": "oracle two-body error, max |delta| km/s, all", "pattern": "  all\\s+n=.*max \\|delta\\| ([\\d.]+)", "recorded": 0.113}
+  ]
+}

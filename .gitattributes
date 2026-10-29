@@ -15,3 +15,6 @@ LICENSE        text eol=lf
 # downloaded are the bytes that are checked out, and a mechanically rewritten
 # archive file is no longer the artefact its citation names.  See CITATIONS.md.
 *.tab -text
+
+# Test fixtures are small text samples (see tests/README.md); LF like the rest.
+tests/fixtures/*  text eol=lf

@@ -6,3 +6,6 @@ __pycache__/
 # `probe_nhats.py --out` writes the joined frame wherever it is pointed.
 # The only data this repo commits is sdsstax_ast.tab; see CITATIONS.md.
 *.csv
+
+# ...except the committed test fixtures.
+!tests/fixtures/*.csv
