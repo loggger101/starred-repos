@@ -99,14 +99,20 @@ class Register(unittest.TestCase):
         self.assertEqual(problems(self.open, self.closed, known_findings(), known_anchors()), [])
 
     def test_each_pin_is_a_commit_of_its_repo(self):
+        checked = 0
         for r in self.open + self.closed:
             repo, _, sha = r["checked_against"].partition("@")
             checkout = os.path.join(os.path.dirname(ROOT), repo)
+            # A row on an upstream star has no checkout here, and must not stop
+            # the rows after it from being checked.
             if not os.path.isdir(os.path.join(checkout, ".git")):
-                self.skipTest(f"no {repo} checkout beside this repo")
+                continue
             done = subprocess.run(["git", "-C", checkout, "cat-file", "-e", sha + "^{commit}"],
                                   capture_output=True)
             self.assertEqual(done.returncode, 0, f"{r['id']}: {sha} is not in {repo}")
+            checked += 1
+        if not checked:
+            self.skipTest("no audited repo checked out beside this one")
 
 
 class Planted(unittest.TestCase):

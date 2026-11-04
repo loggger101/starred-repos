@@ -842,6 +842,30 @@ What the bug touched, checked rather than assumed:
   Between a full run on each solver, none of the 415 dated, oracle or shipped
   figures moved by more than 1e-9 km/s.
 
+### The 23 NHATS bodies the catalog does not hold
+
+Added on 2026-11-04, from a one-off lookup and not a probe. Of NHATS's 7,166 NEAs,
+23 did not join. SBDB's answer for each is recorded in
+`snapshots_leads/2026-11-04`, a separate root so that F20's folder and its manifest
+are untouched, manifest sha256
+`2520cd23925a768d9fbe617e9368d106e2cd762be0a6226b735688655be589cb`.
+
+| why | bodies |
+|---|---|
+| orbit solved on or after the release's 2026-10-21 | 12 |
+| JPL holds no H, so nothing can size them | 6 |
+| under the catalog's 1 m floor | 5 |
+
+The first group rests on a solution date, which does not prove the body was absent
+from JPL on the day. The second is a correct drop. The third is not what the
+setting says. `min_diameter_km` is commented "essentially
+keep everything that has a positive diameter", and `rejected_entries.csv` shows it
+dropping 13 bodies, among them 2008 TS26 and 2020 CW. On the five here the size
+under the floor is one the catalog would derive from H and an assumed albedo (0.47
+to 0.89 m, at H 32.69 to 34.06), so the floor tests the guess in the albedo table,
+and a change to that table moves which bodies exist. 2021 BO, one of the five,
+carries a round trip of 5.08 km/s in NHATS.
+
 ### Cautions
 
 - **Two-body elements carry the dated search.** The replay shows the limit. On 17
