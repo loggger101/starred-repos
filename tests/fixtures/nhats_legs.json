@@ -1,0 +1,634 @@
+[
+ {
+  "answer": {
+   "computed": "2025-09-19",
+   "des": "2012 TP231",
+   "fullname": "       (2012 TP231)",
+   "h": "24.9",
+   "max_size": "80",
+   "min_dur": {
+    "dur": 274,
+    "dv": "11.985"
+   },
+   "min_dur_traj": {
+    "c3": "53.016",
+    "dec_arr": "5.274",
+    "dec_dep": "16.858",
+    "dur_at": 40,
+    "dur_out": 89,
+    "dur_ret": 145,
+    "dur_total": 274,
+    "dv_dep_park": "5.394",
+    "dv_total": "11.985",
+    "launch": "2025-10-25",
+    "tid": 4028,
+    "v_arr_earth": "12.000",
+    "v_dep_earth": "7.281",
+    "vrel_arr_earth": "1.401",
+    "vrel_arr_neo": "0.606",
+    "vrel_dep_neo": "4.585"
+   },
+   "min_dv": {
+    "dur": 354,
+    "dv": "9.271"
+   },
+   "min_dv_traj": {
+    "c3": "32.479",
+    "dec_arr": "23.892",
+    "dec_dep": "18.279",
+    "dur_at": 8,
+    "dur_out": 49,
+    "dur_ret": 297,
+    "dur_total": 354,
+    "dv_dep_park": "4.583",
+    "dv_total": "9.271",
+    "launch": "2025-10-17",
+    "tid": 2940,
+    "v_arr_earth": "12.000",
+    "v_dep_earth": "5.699",
+    "vrel_arr_earth": "0.781",
+    "vrel_arr_neo": "2.008",
+    "vrel_dep_neo": "1.899"
+   },
+   "min_size": "18",
+   "n_via_traj": 5493,
+   "obs_end": "2033-04-27",
+   "obs_flag": " ",
+   "obs_mag": "23.82",
+   "obs_start": "2033-04-07",
+   "occ": "0",
+   "orbit_id": "10",
+   "radar_obs_a": null,
+   "radar_obs_g": null,
+   "radar_snr_a": null,
+   "radar_snr_g": null,
+   "signature": {
+    "source": "NASA/JPL NHATS Data API",
+    "version": "1.3"
+   }
+  },
+  "elements": {
+   "arg_perihelion_deg": 75.43171555246136,
+   "designation": "2012 TP231",
+   "eccentricity": 0.2538761571872084,
+   "element_epoch_jd": 2461200.5,
+   "inclination_deg": 6.753604632786947,
+   "longitude_asc_node_deg": 30.10191657661151,
+   "mean_anomaly_deg": 139.3275727695435,
+   "semi_major_axis_au": 1.119644979169217
+  }
+ },
+ {
+  "answer": {
+   "computed": "2026-10-17",
+   "des": "2020 UF2",
+   "fullname": "       (2020 UF2)",
+   "h": "21.7",
+   "max_size": "352",
+   "min_dur": {
+    "dur": 386,
+    "dv": "11.575"
+   },
+   "min_dur_traj": {
+    "c3": "57.723",
+    "dec_arr": "3.641",
+    "dec_dep": "6.193",
+    "dur_at": 8,
+    "dur_out": 265,
+    "dur_ret": 113,
+    "dur_total": 386,
+    "dv_dep_park": "5.573",
+    "dv_total": "11.575",
+    "launch": "2025-10-17",
+    "tid": 183,
+    "v_arr_earth": "12.000",
+    "v_dep_earth": "7.598",
+    "vrel_arr_earth": "1.328",
+    "vrel_arr_neo": "2.283",
+    "vrel_dep_neo": "2.391"
+   },
+   "min_dv": {
+    "dur": 410,
+    "dv": "10.216"
+   },
+   "min_dv_traj": {
+    "c3": "55.268",
+    "dec_arr": "-9.112",
+    "dec_dep": "0.924",
+    "dur_at": 8,
+    "dur_out": 281,
+    "dur_ret": 121,
+    "dur_total": 410,
+    "dv_dep_park": "5.480",
+    "dv_total": "10.216",
+    "launch": "2025-10-09",
+    "tid": 146,
+    "v_arr_earth": "11.959",
+    "v_dep_earth": "7.434",
+    "vrel_arr_earth": "0.000",
+    "vrel_arr_neo": "1.973",
+    "vrel_dep_neo": "2.762"
+   },
+   "min_size": "79",
+   "n_via_traj": 721,
+   "obs_end": "2027-01-03",
+   "obs_flag": " ",
+   "obs_mag": "21.68",
+   "obs_start": "2026-11-03",
+   "occ": "0",
+   "orbit_id": "18",
+   "radar_obs_a": null,
+   "radar_obs_g": null,
+   "radar_snr_a": null,
+   "radar_snr_g": null,
+   "signature": {
+    "source": "NASA/JPL NHATS Data API",
+    "version": "1.3"
+   }
+  },
+  "elements": {
+   "arg_perihelion_deg": 34.61596909732252,
+   "designation": "2020 UF2",
+   "eccentricity": 0.3056959646112191,
+   "element_epoch_jd": 2461200.5,
+   "inclination_deg": 3.068892628833772,
+   "longitude_asc_node_deg": 235.4910796887862,
+   "mean_anomaly_deg": 318.6947527498117,
+   "semi_major_axis_au": 1.129555865756066
+  }
+ },
+ {
+  "answer": {
+   "computed": "2026-08-27",
+   "des": "2023 YO1",
+   "fullname": "       (2023 YO1)",
+   "h": "25.9",
+   "max_size": "51",
+   "min_dur": {
+    "dur": 34,
+    "dv": "11.709"
+   },
+   "min_dur_traj": {
+    "c3": "6.813",
+    "dec_arr": "75.664",
+    "dec_dep": "-73.917",
+    "dur_at": 8,
+    "dur_out": 17,
+    "dur_ret": 9,
+    "dur_total": 34,
+    "dv_dep_park": "3.486",
+    "dv_total": "11.709",
+    "launch": "2026-06-06",
+    "tid": 2103355,
+    "v_arr_earth": "11.607",
+    "v_dep_earth": "2.610",
+    "vrel_arr_earth": "0.000",
+    "vrel_arr_neo": "4.726",
+    "vrel_dep_neo": "3.497"
+   },
+   "min_dv": {
+    "dur": 362,
+    "dv": "3.955"
+   },
+   "min_dv_traj": {
+    "c3": "6.642",
+    "dec_arr": "46.613",
+    "dec_dep": "40.893",
+    "dur_at": 40,
+    "dur_out": 225,
+    "dur_ret": 97,
+    "dur_total": 362,
+    "dv_dep_park": "3.478",
+    "dv_total": "3.955",
+    "launch": "2025-07-13",
+    "tid": 1642768,
+    "v_arr_earth": "11.329",
+    "v_dep_earth": "2.577",
+    "vrel_arr_earth": "0.000",
+    "vrel_arr_neo": "0.169",
+    "vrel_dep_neo": "0.308"
+   },
+   "min_size": "11",
+   "n_via_traj": 2557053,
+   "obs_end": "2027-07-29",
+   "obs_flag": " ",
+   "obs_mag": "23.86",
+   "obs_start": "2027-06-28",
+   "occ": "0",
+   "orbit_id": "21",
+   "radar_obs_a": null,
+   "radar_obs_g": null,
+   "radar_snr_a": null,
+   "radar_snr_g": null,
+   "signature": {
+    "source": "NASA/JPL NHATS Data API",
+    "version": "1.3"
+   }
+  },
+  "elements": {
+   "arg_perihelion_deg": 236.6704314591286,
+   "designation": "2023 YO1",
+   "eccentricity": 0.0516768490556667,
+   "element_epoch_jd": 2461200.5,
+   "inclination_deg": 4.489195487158086,
+   "longitude_asc_node_deg": 289.4138251256668,
+   "mean_anomaly_deg": 85.85203662844422,
+   "semi_major_axis_au": 1.00955807517856
+  }
+ },
+ {
+  "answer": {
+   "computed": "2025-03-07",
+   "des": "2017 EV",
+   "fullname": "       (2017 EV)",
+   "h": "26.7",
+   "max_size": "35",
+   "min_dur": {
+    "dur": 314,
+    "dv": "11.903"
+   },
+   "min_dur_traj": {
+    "c3": "39.899",
+    "dec_arr": "-71.218",
+    "dec_dep": "-44.708",
+    "dur_at": 8,
+    "dur_out": 41,
+    "dur_ret": 265,
+    "dur_total": 314,
+    "dv_dep_park": "4.882",
+    "dv_total": "11.903",
+    "launch": "2025-02-27",
+    "tid": 116,
+    "v_arr_earth": "11.720",
+    "v_dep_earth": "6.317",
+    "vrel_arr_earth": "0.000",
+    "vrel_arr_neo": "1.802",
+    "vrel_dep_neo": "5.219"
+   },
+   "min_dv": {
+    "dur": 362,
+    "dv": "10.659"
+   },
+   "min_dv_traj": {
+    "c3": "34.828",
+    "dec_arr": "-47.386",
+    "dec_dep": "-44.278",
+    "dur_at": 8,
+    "dur_out": 33,
+    "dur_ret": 321,
+    "dur_total": 362,
+    "dv_dep_park": "4.678",
+    "dv_total": "10.659",
+    "launch": "2025-02-27",
+    "tid": 95,
+    "v_arr_earth": "11.939",
+    "v_dep_earth": "5.902",
+    "vrel_arr_earth": "0.000",
+    "vrel_arr_neo": "2.192",
+    "vrel_dep_neo": "3.789"
+   },
+   "min_size": "7.8",
+   "n_via_traj": 209,
+   "obs_end": null,
+   "obs_flag": " ",
+   "obs_mag": null,
+   "obs_start": null,
+   "occ": "0",
+   "orbit_id": "11",
+   "radar_obs_a": null,
+   "radar_obs_g": null,
+   "radar_snr_a": null,
+   "radar_snr_g": null,
+   "signature": {
+    "source": "NASA/JPL NHATS Data API",
+    "version": "1.3"
+   }
+  },
+  "elements": {
+   "arg_perihelion_deg": 225.3706317861507,
+   "designation": "2017 EV",
+   "eccentricity": 0.3296806580102135,
+   "element_epoch_jd": 2461200.5,
+   "inclination_deg": 6.982762143939079,
+   "longitude_asc_node_deg": 345.0484493478265,
+   "mean_anomaly_deg": 257.7103598858785,
+   "semi_major_axis_au": 1.376873403626372
+  }
+ },
+ {
+  "answer": {
+   "computed": "2025-03-07",
+   "des": "2022 AV4",
+   "fullname": "       (2022 AV4)",
+   "h": "25.8",
+   "max_size": "54",
+   "min_dur": {
+    "dur": 82,
+    "dv": "11.934"
+   },
+   "min_dur_traj": {
+    "c3": "5.949",
+    "dec_arr": "-71.850",
+    "dec_dep": "74.497",
+    "dur_at": 8,
+    "dur_out": 33,
+    "dur_ret": 41,
+    "dur_total": 82,
+    "dv_dep_park": "3.447",
+    "dv_total": "11.934",
+    "launch": "2025-01-10",
+    "tid": 34248,
+    "v_arr_earth": "11.322",
+    "v_dep_earth": "2.439",
+    "vrel_arr_earth": "0.000",
+    "vrel_arr_neo": "3.491",
+    "vrel_dep_neo": "4.996"
+   },
+   "min_dv": {
+    "dur": 386,
+    "dv": "9.347"
+   },
+   "min_dv_traj": {
+    "c3": "8.502",
+    "dec_arr": "58.341",
+    "dec_dep": "46.449",
+    "dur_at": 8,
+    "dur_out": 57,
+    "dur_ret": 321,
+    "dur_total": 386,
+    "dv_dep_park": "3.562",
+    "dv_total": "9.347",
+    "launch": "2025-01-18",
+    "tid": 35283,
+    "v_arr_earth": "11.846",
+    "v_dep_earth": "2.916",
+    "vrel_arr_earth": "0.000",
+    "vrel_arr_neo": "1.832",
+    "vrel_dep_neo": "3.953"
+   },
+   "min_size": "12",
+   "n_via_traj": 64709,
+   "obs_end": "2028-04-26",
+   "obs_flag": " ",
+   "obs_mag": "21.97",
+   "obs_start": "2027-11-19",
+   "occ": "0",
+   "orbit_id": "11",
+   "radar_obs_a": null,
+   "radar_obs_g": null,
+   "radar_snr_a": null,
+   "radar_snr_g": null,
+   "signature": {
+    "source": "NASA/JPL NHATS Data API",
+    "version": "1.3"
+   }
+  },
+  "elements": {
+   "arg_perihelion_deg": 25.04194089601487,
+   "designation": "2022 AV4",
+   "eccentricity": 0.2277200711475721,
+   "element_epoch_jd": 2461200.5,
+   "inclination_deg": 4.28500237565063,
+   "longitude_asc_node_deg": 113.7463587548092,
+   "mean_anomaly_deg": 318.5066751059946,
+   "semi_major_axis_au": 1.311577982171478
+  }
+ },
+ {
+  "answer": {
+   "computed": "2025-12-12",
+   "des": "2024 XF11",
+   "fullname": "       (2024 XF11)",
+   "h": "24.8",
+   "max_size": "84",
+   "min_dur": {
+    "dur": 138,
+    "dv": "11.960"
+   },
+   "min_dur_traj": {
+    "c3": "17.993",
+    "dec_arr": "-0.326",
+    "dec_dep": "1.994",
+    "dur_at": 8,
+    "dur_out": 65,
+    "dur_ret": 65,
+    "dur_total": 138,
+    "dv_dep_park": "3.976",
+    "dv_total": "11.960",
+    "launch": "2021-02-16",
+    "tid": 122764,
+    "v_arr_earth": "11.864",
+    "v_dep_earth": "4.242",
+    "vrel_arr_earth": "0.000",
+    "vrel_arr_neo": "4.381",
+    "vrel_dep_neo": "3.602"
+   },
+   "min_dv": {
+    "dur": 386,
+    "dv": "6.156"
+   },
+   "min_dv_traj": {
+    "c3": "32.590",
+    "dec_arr": "-12.290",
+    "dec_dep": "-7.887",
+    "dur_at": 136,
+    "dur_out": 137,
+    "dur_ret": 113,
+    "dur_total": 386,
+    "dv_dep_park": "4.587",
+    "dv_total": "6.156",
+    "launch": "2024-11-07",
+    "tid": 489600,
+    "v_arr_earth": "12.000",
+    "v_dep_earth": "5.709",
+    "vrel_arr_earth": "0.034",
+    "vrel_arr_neo": "0.632",
+    "vrel_dep_neo": "0.903"
+   },
+   "min_size": "19",
+   "n_via_traj": 555486,
+   "obs_end": null,
+   "obs_flag": " ",
+   "obs_mag": null,
+   "obs_start": null,
+   "occ": "1",
+   "orbit_id": "6",
+   "radar_obs_a": null,
+   "radar_obs_g": null,
+   "radar_snr_a": null,
+   "radar_snr_g": null,
+   "signature": {
+    "source": "NASA/JPL NHATS Data API",
+    "version": "1.3"
+   }
+  },
+  "elements": {
+   "arg_perihelion_deg": 67.40769739230095,
+   "designation": "2024 XF11",
+   "eccentricity": 0.1582275883763286,
+   "element_epoch_jd": 2461200.5,
+   "inclination_deg": 4.275142929252952,
+   "longitude_asc_node_deg": 238.8699281237489,
+   "mean_anomaly_deg": 281.6523841125609,
+   "semi_major_axis_au": 1.015177700379482
+  }
+ },
+ {
+  "answer": {
+   "computed": "2025-05-02",
+   "des": "2020 XT2",
+   "fullname": "       (2020 XT2)",
+   "h": "24.8",
+   "max_size": "87",
+   "min_dur": {
+    "dur": 146,
+    "dv": "11.837"
+   },
+   "min_dur_traj": {
+    "c3": "21.396",
+    "dec_arr": "28.753",
+    "dec_dep": "-30.736",
+    "dur_at": 8,
+    "dur_out": 41,
+    "dur_ret": 97,
+    "dur_total": 146,
+    "dv_dep_park": "4.122",
+    "dv_total": "11.837",
+    "launch": "2020-12-22",
+    "tid": 36705,
+    "v_arr_earth": "11.573",
+    "v_dep_earth": "4.626",
+    "vrel_arr_earth": "0.000",
+    "vrel_arr_neo": "1.679",
+    "vrel_dep_neo": "6.037"
+   },
+   "min_dv": {
+    "dur": 338,
+    "dv": "7.546"
+   },
+   "min_dv_traj": {
+    "c3": "3.742",
+    "dec_arr": "-10.802",
+    "dec_dep": "-1.103",
+    "dur_at": 8,
+    "dur_out": 273,
+    "dur_ret": 57,
+    "dur_total": 338,
+    "dv_dep_park": "3.348",
+    "dv_total": "7.546",
+    "launch": "2024-05-15",
+    "tid": 53804,
+    "v_arr_earth": "11.903",
+    "v_dep_earth": "1.934",
+    "vrel_arr_earth": "0.000",
+    "vrel_arr_neo": "2.681",
+    "vrel_dep_neo": "1.518"
+   },
+   "min_size": "20",
+   "n_via_traj": 89710,
+   "obs_end": "2028-09-20",
+   "obs_flag": " ",
+   "obs_mag": "23.84",
+   "obs_start": "2028-09-16",
+   "occ": "0",
+   "orbit_id": "13",
+   "radar_obs_a": null,
+   "radar_obs_g": null,
+   "radar_snr_a": null,
+   "radar_snr_g": null,
+   "signature": {
+    "source": "NASA/JPL NHATS Data API",
+    "version": "1.3"
+   }
+  },
+  "elements": {
+   "arg_perihelion_deg": 333.095087992296,
+   "designation": "2020 XT2",
+   "eccentricity": 0.2403714984115716,
+   "element_epoch_jd": 2461200.5,
+   "inclination_deg": 2.040858059732849,
+   "longitude_asc_node_deg": 166.4550005000575,
+   "mean_anomaly_deg": 347.4065389168097,
+   "semi_major_axis_au": 1.222625791158037
+  }
+ },
+ {
+  "answer": {
+   "computed": "2021-04-29",
+   "des": "2001 KM20",
+   "fullname": "       (2001 KM20)",
+   "h": "23.9",
+   "max_size": "129",
+   "min_dur": {
+    "dur": 194,
+    "dv": "11.983"
+   },
+   "min_dur_traj": {
+    "c3": "21.475",
+    "dec_arr": "29.681",
+    "dec_dep": "-6.091",
+    "dur_at": 8,
+    "dur_out": 121,
+    "dur_ret": 65,
+    "dur_total": 194,
+    "dv_dep_park": "4.125",
+    "dv_total": "11.983",
+    "launch": "2028-03-23",
+    "tid": 26389,
+    "v_arr_earth": "12.000",
+    "v_dep_earth": "4.634",
+    "vrel_arr_earth": "0.370",
+    "vrel_arr_neo": "5.724",
+    "vrel_dep_neo": "1.763"
+   },
+   "min_dv": {
+    "dur": 330,
+    "dv": "7.626"
+   },
+   "min_dv_traj": {
+    "c3": "8.962",
+    "dec_arr": "33.384",
+    "dec_dep": "54.266",
+    "dur_at": 8,
+    "dur_out": 249,
+    "dur_ret": 73,
+    "dur_total": 330,
+    "dv_dep_park": "3.582",
+    "dv_total": "7.626",
+    "launch": "2027-11-16",
+    "tid": 13535,
+    "v_arr_earth": "11.876",
+    "v_dep_earth": "2.994",
+    "vrel_arr_earth": "0.000",
+    "vrel_arr_neo": "2.260",
+    "vrel_dep_neo": "1.784"
+   },
+   "min_size": "29",
+   "n_via_traj": 38237,
+   "obs_end": "2028-05-25",
+   "obs_flag": " ",
+   "obs_mag": "22.61",
+   "obs_start": "2028-02-22",
+   "occ": "0",
+   "orbit_id": "18",
+   "radar_obs_a": null,
+   "radar_obs_g": null,
+   "radar_snr_a": null,
+   "radar_snr_g": null,
+   "signature": {
+    "source": "NASA/JPL NHATS Data API",
+    "version": "1.3"
+   }
+  },
+  "elements": {
+   "arg_perihelion_deg": 251.6408758278429,
+   "designation": "2001 KM20",
+   "eccentricity": 0.2091532255951368,
+   "element_epoch_jd": 2461200.5,
+   "inclination_deg": 3.7283705624347,
+   "longitude_asc_node_deg": 56.01716150900646,
+   "mean_anomaly_deg": 114.2739196399624,
+   "semi_major_axis_au": 1.183656292607595
+  }
+ }
+]

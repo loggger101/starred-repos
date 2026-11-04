@@ -65,6 +65,33 @@ class ShippedModel(unittest.TestCase):
         with mock.patch.object(probe_lambert.ob, "lambert_izzo", off):
             self.assertFalse(quiet(probe_lambert.check_solver))
 
+    def test_lambert_solver_catches_a_root_below_minus_one(self):
+        # What F20 found: a guess far from the root, no floor at x = -1, and an
+        # answer of 400 km/s on a 25 day flight. It reads as converged, so it
+        # has to reach the check as a failed solve.
+        def unguarded(T, x0, lam, N):
+            T0 = np.arccos(lam) + lam * np.sqrt(1.0 - lam * lam)
+            T1 = 2.0 / 3.0 * (1.0 - lam ** 3)
+            x = (T0 / T) ** np.log2(T1 / T0) - 1.0 if T1 < T < T0 else x0
+            for _ in range(40):
+                y = orbital._tof_x(x, lam, N)
+                fr = y - T
+                d1, d2, d3 = orbital._dtof_dx(x, y, lam)
+                x -= fr * (d1 * d1 - fr * d2 / 2.0) / (d1 * (d1 * d1 - fr * d2) + d3 * fr * fr / 6.0)
+                if abs(fr) < 1e-13:
+                    break
+            return x
+        with mock.patch.object(orbital, "_householder", unguarded):
+            self.assertFalse(quiet(probe_lambert.check_solver))
+
+    def test_lambert_solver_catches_a_flight_it_cannot_solve(self):
+        real = orbital.lambert_izzo
+
+        def gives_up(r1, r2, tof, **kw):
+            return (None, None) if tof < 30 * orbital.DAY_S else real(r1, r2, tof, **kw)
+        with mock.patch.object(probe_lambert.ob, "lambert_izzo", gives_up):
+            self.assertFalse(quiet(probe_lambert.check_solver))
+
 
 class Prospector(unittest.TestCase):
 

@@ -7,5 +7,6 @@ __pycache__/
 # The only data this repo commits is sdsstax_ast.tab; see CITATIONS.md.
 *.csv
 
-# ...except the committed test fixtures.
+# ...except the committed test fixtures, and the revision candidates register.
 !tests/fixtures/*.csv
+!/revision_candidates*.csv

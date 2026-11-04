@@ -12,9 +12,10 @@ later, and it says which release the checkout had installed.
 It changes nothing in either repo. Each probe still reads only.
 
 A probe whose self-check prints MISMATCH, or whose figure cannot be found in
-its output, fails the run, and the exit status says so. The slow Lambert probe
-(about ten minutes) runs only with --slow, and the probes that call public
-APIs can be left out with --offline.
+its output, fails the run, and the exit status says so. The slow probes, Lambert
+(about ten minutes) and JPL's legs (over an hour), run only with --slow.
+--offline leaves out the probes that call public APIs, and the ones whose static
+table is not in the cache yet, which would otherwise fetch it.
 
 Usage, from this repo with economicspace beside it:
     py run_all.py
@@ -40,7 +41,9 @@ import time
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import snapshots  # noqa: E402
-DEFAULT_OUT = os.path.join(os.path.expanduser("~"), ".cache", "starred-repos", "runs")
+CACHE = os.path.join(os.path.expanduser("~"), ".cache", "starred-repos")
+DEFAULT_OUT = os.path.join(CACHE, "runs")
+DEFAULT_TIMEOUT_S = 1800
 
 
 def load_spec(path=os.path.join(HERE, "figures.json")):
@@ -84,15 +87,28 @@ def extract(pattern, text):
     return float(m.group(1).replace(",", ""))
 
 
+def needs_network(probe, cache=CACHE):
+    """Whether a probe would reach the network: an API, or a table not yet in the cache."""
+    table = probe.get("download")
+    return bool(probe.get("network")) or bool(table and not os.path.exists(os.path.join(cache, table)))
+
+
+def timeout_for(probe, override=None):
+    """Seconds a probe gets: --timeout if given, then its own, then the default."""
+    return override or probe.get("timeout", DEFAULT_TIMEOUT_S)
+
+
 def main():
     ap = argparse.ArgumentParser(description="run every probe and compare its headline figures")
     ap.add_argument("--repo", default=os.path.join(os.path.dirname(HERE), "economicspace"),
                     help="economicspace checkout (default: beside this repo)")
     ap.add_argument("--only", nargs="*", help="probe keys from figures.json")
     ap.add_argument("--slow", action="store_true", help="include the slow probes")
-    ap.add_argument("--offline", action="store_true", help="skip probes that call public APIs")
+    ap.add_argument("--offline", action="store_true",
+                    help="skip probes that call public APIs or would download a table")
     ap.add_argument("--out", default=DEFAULT_OUT, help="where the dated JSON goes")
-    ap.add_argument("--timeout", type=int, default=1800, help="seconds per probe")
+    ap.add_argument("--timeout", type=int, default=None,
+                    help=f"seconds per probe (default: the probe's own, else {DEFAULT_TIMEOUT_S})")
     ap.add_argument("--keep-output", action="store_true",
                     help="also save each probe's full output beside the JSON")
     ap.add_argument("--replay", default=None,
@@ -112,7 +128,8 @@ def main():
             continue
         if p.get("slow") and not args.slow and not args.only:
             continue
-        if p.get("network") and args.offline:
+        if args.offline and needs_network(p):
+            print(f"  --offline leaves out {key}")
             continue
         chosen.append(key)
 
@@ -127,7 +144,7 @@ def main():
         p = spec["probes"][key]
         print(f"  running {p['script']} {' '.join(p['args'])} ...", flush=True)
         outputs[key], seconds[key], statuses[key] = run_probe(repo, p["script"], p["args"],
-                                                              args.timeout)
+                                                              timeout_for(p, args.timeout))
         print(f"    {statuses[key]} in {seconds[key]:.0f} s")
 
     rows, failed = [], [k for k, s in statuses.items() if s != "ok"]

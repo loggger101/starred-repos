@@ -15,6 +15,9 @@ python -m unittest discover -s tests -t . -v
 | `test_planted.py` | each of those self-checks failing on a planted defect: a recorded figure moved, a constant changed, an exponent restored, a parse order reversed. A check that cannot fail proves nothing |
 | `test_probes_f16_f18.py` | F16's identity filter and NEOWISE join, F17's model check, F18's table parser, each with its planted defect |
 | `test_probes_f15_f19.py` | F19's Horizons parser, Hermite interpolation and its fourth-power check, with a planted linear interpolant |
+| `test_probe_f20.py` | F20's parser, its leg and parking-orbit check, the launch-window check, the solver flying JPL's trajectories and every orbit staying in reach of a bound transfer, the coverage check and the wait for a throttled API, each with its planted defect |
+| `test_run_all.py` | `run_all.py` failing when a probe does, what `--offline` leaves out, and every figure in `figures.json` reading back out of the note that records it |
+| `test_revision_candidates.py` | each row of the register well formed and in the right file, its note's heading present and its pin a full commit of the repo it names, with a planted defect for each rule. The commit's existence needs that repo's checkout beside this one, and skips without it |
 | `test_snapshots.py` | `snapshots.py` recording, replaying, and refusing a tampered or unrecorded response |
 | `_util.py` | the repo root on `sys.path`, quiet calls, fixture loaders, a synthetic Toliou-shaped grid |
 
@@ -48,3 +51,8 @@ what `check_parse` reproduces.
 `fixtures/horizons_vectors.txt` is JPL Horizons' answer for 2000 SG344's
 heliocentric ecliptic state vectors, 2027-01-01 to 2027-03-01 every two days,
 as served on 2026-10-29, line endings converted to LF.
+
+`fixtures/nhats_legs.json` is eight NEAs of F20's sample with U <= 2, the eight
+whose cheapest trajectory launches nearest the sample's median date. Each entry
+holds NHATS's object-mode answer as served on 2026-11-04, and the body's
+elements from catalog release `data-2026-10-21b` (AsteroidCatalog, MIT).
