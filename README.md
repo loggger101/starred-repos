@@ -54,7 +54,7 @@ another repo, the change is a row in
 | F17 | [FOURTH-PASS](FOURTH-PASS.md#f17-a-debiased-population-model-agrees-the-guessed-cs-are-mostly-not-dark) | Granvik et al.'s debiased model disagrees with 2,959 of the 3,460 guessed Cs | measured; in MODEL.md |
 | F18 | [FOURTH-PASS](FOURTH-PASS.md#f18-the-lightcurve-database-adds-no-spins-and-trims-f13s-headline) | the LCDB adds no NEO periods; on its reliable ones F13's share is 25.6%, and the faint bins hold | measured |
 | F19 | [FOURTH-PASS](FOURTH-PASS.md#f19-f4s-oracle-is-not-the-problem-its-two-body-error-is-00035-kms) | F4's oracle carries a median 0.0035 km/s of two-body error against a 1.3 km/s gap | measured; closes SPACE-MAP section 4; in MODEL.md's delta-v limitation |
-| F20 | [FOURTH-PASS](FOURTH-PASS.md#f20-most-of-jpls-gap-is-the-round-trip-and-a-dated-one-way-search-sits-036-kms-above-shipped) | JPL's outbound leg sits 1.39 km/s above shipped, but a one-way search on the same dates sits only 0.36 above it, so most of that gap is the round trip. It also found a Lambert solver defect on short flights | measured; solver fixed; two wording rows in the register |
+| F20 | [FOURTH-PASS](FOURTH-PASS.md#f20-most-of-jpls-gap-is-the-round-trip-and-a-dated-one-way-search-sits-036-kms-above-shipped) | JPL's outbound leg sits 1.39 km/s above shipped, but a one-way search on the same dates sits only 0.36 above it, so most of that gap is the round trip. It also found a Lambert solver defect on short flights | measured; solver fixed; its changes for other repos are in the register |
 
 ## What to run
 
