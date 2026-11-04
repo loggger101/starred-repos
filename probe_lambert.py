@@ -131,19 +131,30 @@ SOLVER_CASES = [
     (1.458, 0.223, 10.8, 304.3, 178.9, 100.0, 330.0),
 ]
 
+# Fractions of a period flown on each of those orbits as well. The short arcs
+# are the branch of the initial guess the four flights above never reach, where
+# the solver once settled on a root below x = -1 (F20).
+SOLVER_ARCS = (0.01, 0.03, 0.07, 0.15, 0.3, 0.45, 0.55, 0.7, 0.9, 0.97)
+
 
 def check_solver(tol_km_s=1e-6):
     """`lambert_izzo` must recover the velocities of an orbit from two of its positions."""
     worst = 0.0
+    flights = 0
     for a, e, i, raan, argp, M0, tof_d in SOLVER_CASES:
         el = (a * ob.AU_KM, e, np.radians(i), np.radians(raan), np.radians(argp), np.radians(M0))
         r1, v1 = ob.propagate_elements(*el, 0.0)
-        r2, v2 = ob.propagate_elements(*el, tof_d * ob.DAY_S)
-        s1, s2 = ob.lambert_izzo(r1.ravel(), r2.ravel(), tof_d * ob.DAY_S)
-        worst = max(worst, np.abs(s1 - v1.ravel()).max(), np.abs(s2 - v2.ravel()).max())
+        for tof in (tof_d, *(f * 365.25 * a ** 1.5 for f in SOLVER_ARCS)):
+            r2, v2 = ob.propagate_elements(*el, tof * ob.DAY_S)
+            s1, s2 = ob.lambert_izzo(r1.ravel(), r2.ravel(), tof * ob.DAY_S)
+            flights += 1
+            if s1 is None:
+                worst = np.inf
+                continue
+            worst = max(worst, np.abs(s1 - v1.ravel()).max(), np.abs(s2 - v2.ravel()).max())
     ok = worst < tol_km_s
-    print(f"SOLVER  lambert_izzo round trip on {len(SOLVER_CASES)} orbits: worst velocity gap"
-          f" {worst:.1e} km/s ({'OK' if ok else 'MISMATCH -- the Lambert solver is wrong'})")
+    print(f"SOLVER  lambert_izzo round trip on {len(SOLVER_CASES)} orbits, {flights} flights: worst"
+          f" velocity gap {worst:.1e} km/s ({'OK' if ok else 'MISMATCH -- the Lambert solver is wrong'})")
     return ok
 
 

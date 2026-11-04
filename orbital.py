@@ -220,7 +220,7 @@ def _dtof_dx(x, T, lam):
     y = np.sqrt(1.0 - ll * umx2)
     d1 = 1.0 / umx2 * (3.0 * T * x - 2.0 + 2.0 * ll * lam * x / y)
     d2 = 1.0 / umx2 * (3.0 * T + 5.0 * x * d1 + 2.0 * (1.0 - ll) * ll * lam / y ** 3)
-    d3 = 1.0 / umx2 * (7.0 * x * d2 + 8.0 * d1 - 6.0 * (1.0 - ll) * ll * ll * lam / y ** 5)
+    d3 = 1.0 / umx2 * (7.0 * x * d2 + 8.0 * d1 - 6.0 * (1.0 - ll) * ll * ll * lam * x / y ** 5)
     return d1, d2, d3
 
 
@@ -233,9 +233,6 @@ def _householder(T, x0, lam, N, tol=1e-13, max_iter=40):
         if abs(fr) < tol:
             return x
         d1, d2, d3 = _dtof_dx(x, y, lam)
-        den = d1 * d1 - fr * d2 / 2.0
-        num = d1 * d1 - fr * d2 / 2.0
-        step = fr * (num) / (d1 * (den) - fr * fr * d3 / 6.0) if d1 != 0.0 else 0.0
         # Householder third order, written the way Izzo states it
         step = fr * (d1 * d1 - fr * d2 / 2.0) / (
             d1 * (d1 * d1 - fr * d2) + d3 * fr * fr / 6.0
@@ -254,7 +251,7 @@ def lambert_izzo(r1, r2, tof_s, mu=MU_SUN_KM3_S2, prograde=True, revs=0):
 
     `r1`, `r2` are 3-vectors in km.  Only the zero-revolution solution is
     returned when `revs` is 0, which is the case a minimum-energy transfer
-    search wants.
+    search wants.  A solve that does not converge returns (None, None) too.
     """
     r1 = np.asarray(r1, float); r2 = np.asarray(r2, float)
     tof_s = float(tof_s)
@@ -305,9 +302,13 @@ def lambert_izzo(r1, r2, tof_s, mu=MU_SUN_KM3_S2, prograde=True, revs=0):
     elif T < T1:
         x0 = 2.5 * T1 * (T1 - T) / (T * (1.0 - lam ** 5)) + 1.0
     else:
-        x0 = (T0 / T) ** (np.log2(T1 / T0)) - 1.0
+        x0 = (T / T0) ** (np.log(2.0) / np.log(T1 / T0)) - 1.0
 
     x = _householder(T, x0, lam, revs)
+    # x lives above -1. The hyperbolic form of `_tof_x` has a second root below
+    # it that means nothing and reads as converged.
+    if not x > -1.0 or abs(_tof_x(x, lam, revs) - T) > 1e-9:
+        return None, None
 
     gamma = np.sqrt(mu * s / 2.0)
     rho = (R1 - R2) / c

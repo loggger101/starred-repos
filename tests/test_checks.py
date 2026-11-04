@@ -8,11 +8,13 @@ when the download is absent.
 
 import os
 import unittest
+from unittest import mock
 
 import numpy as np
 
 from tests._util import builder_rows, fixture, quiet, synthetic_neos, synthetic_toliou
 
+import orbital
 import probe_covariance
 import probe_lambert
 import probe_nhats
@@ -42,6 +44,19 @@ class ShippedModel(unittest.TestCase):
 
     def test_lambert_solver(self):
         self.assertTrue(quiet(probe_lambert.check_solver))
+
+    def test_lambert_short_flight_stays_on_the_physical_root(self):
+        # 23 degrees in 25 days at 1 AU, F20's flight to 2021 GQ10. It came
+        # back at 400 km/s from the root at x = -10.4.
+        r1 = np.array([1.5e8, 0.0, 0.0])
+        r2 = 1.53e8 * np.array([np.cos(0.4), np.sin(0.4), 0.0])
+        v1, _ = orbital.lambert_izzo(r1, r2, 25 * orbital.DAY_S)
+        self.assertLess(np.linalg.norm(v1), 40.0)
+
+    def test_lambert_refuses_a_root_below_minus_one(self):
+        with mock.patch.object(orbital, "_householder", return_value=-10.4):
+            r1, r2 = np.array([1.5e8, 0.0, 0.0]), np.array([1.3e8, 6.0e7, 0.0])
+            self.assertEqual(orbital.lambert_izzo(r1, r2, 25 * orbital.DAY_S), (None, None))
 
     def test_vectorised_and_scalar_shipped_agree(self):
         r = probe_nhats.REFERENCE

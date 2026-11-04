@@ -1,5 +1,5 @@
 {
-  "_about": "Headline figures as the notes record them, and how run_all.py reads each one back out of its probe's output. A figure belongs to the release it was taken on (CLAUDE.md), so a re-run is compared against it, never written over it. `pattern` is a regular expression whose first group is the number; thousands separators are dropped before it is parsed.",
+  "_about": "Headline figures as the notes record them, and how run_all.py reads each one back out of its probe's output. A figure belongs to the release it was taken on (CLAUDE.md), so a re-run is compared against it, never written over it. `pattern` is a regular expression whose first group is the number; thousands separators are dropped before it is parsed. A probe's `download` names the static table it fetches once into ~/.cache/starred-repos, so --offline can leave it out until that table is there. A probe's `timeout` is its seconds where the default would stop it.",
   "probes": {
     "plane_change": {"script": "probe_plane_change.py", "args": [], "slow": false},
     "taxonomy":     {"script": "probe_taxonomy.py", "args": [], "slow": false},
@@ -7,14 +7,15 @@
     "nhats":        {"script": "probe_nhats.py", "args": ["--asterank"], "slow": false, "network": true},
     "prospector":   {"script": "probe_prospector.py", "args": [], "slow": false, "network": true},
     "taxonomy_prior": {"script": "probe_taxonomy_prior.py", "args": [], "slow": false},
-    "perihelion":   {"script": "probe_perihelion.py", "args": [], "slow": false},
+    "perihelion":   {"script": "probe_perihelion.py", "args": [], "slow": false, "download": "Toliou+_2021_MNRAS.dat.gz"},
     "spin":         {"script": "probe_spin.py", "args": [], "slow": false},
     "covariance":   {"script": "probe_covariance.py", "args": [], "slow": false, "network": true},
     "recovery":     {"script": "probe_recovery.py", "args": ["--start", "2026-10-29"], "slow": false, "network": true},
     "albedo_coverage": {"script": "probe_albedo_coverage.py", "args": [], "slow": false, "network": true},
-    "source_regions": {"script": "probe_source_regions.py", "args": [], "slow": false},
-    "lightcurves":  {"script": "probe_lightcurves.py", "args": [], "slow": false},
-    "horizons":     {"script": "probe_horizons.py", "args": [], "slow": false, "network": true}
+    "source_regions": {"script": "probe_source_regions.py", "args": [], "slow": false, "download": "Granvik+_2018_Icarus_model_lowres_v20181213_albedo_cp.out.gz"},
+    "lightcurves":  {"script": "probe_lightcurves.py", "args": [], "slow": false, "download": "LCLIST_PUB_CURRENT.zip"},
+    "horizons":     {"script": "probe_horizons.py", "args": [], "slow": false, "network": true},
+    "nhats_legs":   {"script": "probe_nhats_legs.py", "args": ["--n", "400", "--seed", "1"], "slow": true, "network": true, "timeout": 14400}
   },
   "figures": [
     {"probe": "plane_change", "finding": "F1", "note": "FINDINGS.md", "recorded_on": "2026-09-03",
@@ -99,6 +100,23 @@
     {"probe": "horizons", "finding": "F19", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
      "label": "oracle two-body error, median |delta| km/s, all", "pattern": "  all\\s+n=\\s*\\d+\\s+median [+\\-\\d.]+\\s+mean [+\\-\\d.]+\\s+median \\|delta\\| ([\\d.]+)", "recorded": 0.0035},
     {"probe": "horizons", "finding": "F19", "note": "FOURTH-PASS.md", "recorded_on": "2026-10-29",
-     "label": "oracle two-body error, max |delta| km/s, all", "pattern": "  all\\s+n=.*max \\|delta\\| ([\\d.]+)", "recorded": 0.113}
+     "label": "oracle two-body error, max |delta| km/s, all", "pattern": "  all\\s+n=.*max \\|delta\\| ([\\d.]+)", "recorded": 0.113},
+
+    {"probe": "nhats_legs", "finding": "F20", "note": "FOURTH-PASS.md", "recorded_on": "2026-11-04",
+     "label": "JPL's outbound leg minus shipped, median km/s", "pattern": "JPL minus shipped    median ([+\\-\\d.]+)", "recorded": 1.392},
+    {"probe": "nhats_legs", "finding": "F20", "note": "FOURTH-PASS.md", "recorded_on": "2026-11-04",
+     "label": "dated one-way search minus shipped, median km/s", "pattern": "dated minus shipped  median ([+\\-\\d.]+)", "recorded": 0.361},
+    {"probe": "nhats_legs", "finding": "F20", "note": "FOURTH-PASS.md", "recorded_on": "2026-11-04",
+     "label": "JPL's rendezvous burn, median km/s", "pattern": "rendezvous shipped median\\s+[\\d.]+\\s+JPL median\\s+([\\d.]+)", "recorded": 1.932},
+    {"probe": "nhats_legs", "finding": "F20", "note": "FOURTH-PASS.md", "recorded_on": "2026-11-04",
+     "label": "shipped match burn vs JPL's round trip, Spearman", "pattern": "  shipped match\\s+[\\d.]+\\s+([\\d.]+)", "recorded": 0.0156},
+    {"probe": "nhats_legs", "finding": "F20", "note": "FOURTH-PASS.md", "recorded_on": "2026-11-04",
+     "label": "dated one-way search vs JPL's outbound leg, Spearman", "pattern": "  dated oracle\\s+([\\d.]+)\\s+[\\d.]+", "recorded": 0.649},
+    {"probe": "nhats_legs", "finding": "F20", "note": "FOURTH-PASS.md", "recorded_on": "2026-11-04",
+     "label": "prospector vs JPL's outbound leg, Spearman", "pattern": "  prospector\\s+([\\d.]+)\\s+[\\d.]+", "recorded": 0.6938},
+    {"probe": "nhats_legs", "finding": "F20", "note": "FOURTH-PASS.md", "recorded_on": "2026-11-04",
+     "label": "bodies F4's oracle prices above JPL's leg", "pattern": "oracle above JPL's leg \\(not a minimum there\\): ([\\d,]+)", "recorded": 149},
+    {"probe": "nhats_legs", "finding": "F20", "note": "FOURTH-PASS.md", "recorded_on": "2026-11-04",
+     "label": "JPL's nearest apsis is perihelion, %", "pattern": "JPL's nearest apsis is perihelion on ([\\d.]+)%", "recorded": 74.8}
   ]
 }

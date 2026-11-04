@@ -17,6 +17,7 @@ LF line endings, and the notes' relative links.
 | [`CITATIONS.md`](CITATIONS.md) | every reference, licence and attribution obligation |
 | `FINDINGS.md`, `SECOND-PASS.md`, `SPACE-MAP.md`, `SOURCES.md`, `THIRD-PASS.md`, `FOURTH-PASS.md` | the audit as it was measured, with dates |
 | [`figures.json`](figures.json) | each recorded headline figure, the release date it belongs to, and the pattern `run_all.py` reads it back with |
+| [`revision_candidates.csv`](revision_candidates.csv), [`revision_candidates_closed.csv`](revision_candidates_closed.csv) | what this repo wants changed in the others, and what became of it |
 | this file | how to edit safely |
 
 ## Rules
@@ -50,6 +51,18 @@ LF line endings, and the notes' relative links.
 - A new headline figure goes into `figures.json` with the date it was taken
   and a pattern that reads it out of the probe's output; check the pattern
   against the recorded output before committing.
+- This repo never edits the repos it audits. A change it wants made in one is
+  a row in `revision_candidates.csv`: the target, the value there, the full
+  commit that value was read from, and the change. `evidence` says why and
+  `note` links the section that measured it; a row restates no measured
+  figure, because the note holds each figure with its release. Ids are
+  `sr-NNN`, one above the highest in either file, never reused. General_Research's
+  `rc-NNN` register is separate, since its rows must cite a source in its
+  registry; where one of its rows bears on one here, name it in `evidence`.
+  On a re-check update `status`, `checked_against` and `checked_date` rather
+  than adding a row. A row no longer `open` or `blocked` moves to
+  `revision_candidates_closed.csv` in the same commit, and rows are never
+  deleted. `tests/test_revision_candidates.py` holds these rules.
 - Network reads go through `snapshots.fetch`, so every answer is recorded with
   its sha256 and can be replayed. Downloaded tables go to
   `~/.cache/starred-repos` (outside OneDrive), are pinned by sha256 in the

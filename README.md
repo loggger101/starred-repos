@@ -21,19 +21,22 @@ Stage 1, 2 or 3, so none can invalidate a `.verify` baseline.
 | [`SECOND-PASS.md`](SECOND-PASS.md) | a re-read of all seventeen for what the first pass did not open. Four more findings, including the only check on the delta-v model that economicspace did not build itself |
 | [`THIRD-PASS.md`](THIRD-PASS.md) | the 194 stars added after the first audit, read on 2026-10-28. Eighteen touch the domain; prospector, a second asteroid-mining model under Apache-2.0, had code worth adapting, and F10 measures it against the shipped delta-v estimator |
 | [`FOURTH-PASS.md`](FOURTH-PASS.md) | the measurements that followed, F11 onward, each with its own probe: guessed taxonomies, water, spin, orbit uncertainty, and what came after |
+| [`revision_candidates.csv`](revision_candidates.csv) | what this repo wants changed in the repos it audits: the target, the value there, the commit it was read from, and the change. Settled rows move to [`revision_candidates_closed.csv`](revision_candidates_closed.csv) |
 | [`CLAUDE.md`](CLAUDE.md) | rules for editing here. The notes are a dated record, the probes read only, and nothing comes from a copyleft star |
 
 ## Findings
 
 Every finding in the notes, one line each. The section linked is the record;
-this table only points at it.
+this table only points at it. Where a finding wants something changed in
+another repo, the change is a row in
+[`revision_candidates.csv`](revision_candidates.csv).
 
 | finding | where | what it found | status |
 |---|---|---|---|
 | F1 | [FINDINGS](FINDINGS.md#f1-two-orbital-elements-are-fetched-stored-and-read-by-nothing) | the whole plane change is charged at departure; splitting it saves a median 0.47 km/s | not applied: F4 measures the fix making the estimator worse |
 | F2 | [FINDINGS](FINDINGS.md#f2-composition-rests-on-a-taxonomy-that-is-guessed-for-93-of-the-bodies-that-matter) | 90% of NEO taxonomies are guessed, and two surveys disagree on a third of the bodies both cover | open; F11 measures the guess |
 | F3 | [FINDINGS](FINDINGS.md#what-happened-to-each-finding) | pandas 3's dtype inference was unprobed | closed by `probe_pandas_dtypes`, now in samebytes' `parity.py` (economicspace's `platform_check.py` calls it) |
-| F4 | [FINDINGS](FINDINGS.md#f4-the-estimator-is-optimistic-by-11-and-f1-is-the-smaller-of-two-errors-that-cancel) | the closed form sits ~11% below a Lambert optimum, and F1's error partly cancels it | open; a documented limitation in MODEL.md. F19 rules out the oracle's two-body error as the cause |
+| F4 | [FINDINGS](FINDINGS.md#f4-the-estimator-is-optimistic-by-11-and-f1-is-the-smaller-of-two-errors-that-cancel) | the closed form sits ~11% below a Lambert optimum, and F1's error partly cancels it | open; a documented limitation in MODEL.md. F19 rules out the oracle's two-body error as the cause. F20 finds the oracle is not a minimum on NEAs; F4's own sample was not re-measured |
 | F5 | [FINDINGS](FINDINGS.md#f5-mean_anomaly_deg-is-stored-without-its-epoch-so-it-cannot-be-used) | `mean_anomaly_deg` was stored without its epoch | applied in catalog 1.2.0 |
 | - | [SPACE-MAP](SPACE-MAP.md#1-the-finding-the-ranking-could-not-see-orbit-quality) | the ranking cannot see orbit quality; poor orbits are enriched 3.1x at its top | open; F14 and F15 say what a poor orbit costs: a lost target, not a wrong delta-v |
 | - | [SPACE-MAP](SPACE-MAP.md#2-schema-discovery-beats-a-hardcoded-list) | the field list is a literal, so it holds only what somebody thought of | applied in AsteroidCatalog's `tools/sbdb_fields.py`, 2026-10-29 |
@@ -41,7 +44,7 @@ this table only points at it.
 | F7 | [SECOND-PASS](SECOND-PASS.md#f7-brahe-is-not-thin-any-more-and-it-closes-space-mapmds-open-item) | brahe carries a SPICE reader and a Horizons SPK client | capability; F19 bounds F4 another way |
 | F8 | [SECOND-PASS](SECOND-PASS.md#f8-space-datasets-was-read-at-2-per-cent) | space-datasets carries cited sources for the softest assumptions | inventory |
 | F9 | [SECOND-PASS](SECOND-PASS.md#f9-astroquery-carries-an-orbit-covariance-client) | NEODyS serves full orbit covariance | used by F14 and F15 |
-| F10 | [THIRD-PASS](THIRD-PASS.md#f10-prospectors-estimator-ranks-closer-to-jpl-and-the-plane-change-is-not-why) | moving the plane change to arrival is never cheaper on NHATS NEAs; prospector's better rank comes from its departure pricing | measured; in MODEL.md's delta-v limitation |
+| F10 | [THIRD-PASS](THIRD-PASS.md#f10-prospectors-estimator-ranks-closer-to-jpl-and-the-plane-change-is-not-why) | moving the plane change to arrival is never cheaper on NHATS NEAs; prospector's better rank comes from its departure pricing | measured; in MODEL.md's delta-v limitation. F20 measures the split it left open and finds the match burn carries no rank signal |
 | F11 | [FOURTH-PASS](FOURTH-PASS.md#f11-a-guessed-taxonomy-is-right-about-half-the-time-and-a-guessed-c-less) | a guessed class is right about half the time; a guessed C 29% | measured; in MODEL.md, and economicspace's `campaign/composition_range.py` prices the spread |
 | F12 | [FOURTH-PASS](FOURTH-PASS.md#f12-the-top-of-the-ranking-probably-never-passed-close-to-the-sun) | the water-carrying NEOs at the top almost never passed inside 0.2 AU | measured; in MODEL.md's taxonomy limitation |
 | F13 | [FOURTH-PASS](FOURTH-PASS.md#f13-the-bodies-that-lead-the-ranking-spin-too-fast-to-hold-loose-regolith) | a third of NEOs with a measured spin, and all past H 28, cannot hold loose regolith | measured; prospector's cohesion model corrected; F18 puts the share at 25.6% on reliable periods; economicspace calc 1.34.0 adds an opt-in limit |
@@ -51,6 +54,7 @@ this table only points at it.
 | F17 | [FOURTH-PASS](FOURTH-PASS.md#f17-a-debiased-population-model-agrees-the-guessed-cs-are-mostly-not-dark) | Granvik et al.'s debiased model disagrees with 2,959 of the 3,460 guessed Cs | measured; in MODEL.md |
 | F18 | [FOURTH-PASS](FOURTH-PASS.md#f18-the-lightcurve-database-adds-no-spins-and-trims-f13s-headline) | the LCDB adds no NEO periods; on its reliable ones F13's share is 25.6%, and the faint bins hold | measured |
 | F19 | [FOURTH-PASS](FOURTH-PASS.md#f19-f4s-oracle-is-not-the-problem-its-two-body-error-is-00035-kms) | F4's oracle carries a median 0.0035 km/s of two-body error against a 1.3 km/s gap | measured; closes SPACE-MAP section 4; in MODEL.md's delta-v limitation |
+| F20 | [FOURTH-PASS](FOURTH-PASS.md#f20-most-of-jpls-gap-is-the-round-trip-and-a-dated-one-way-search-sits-036-kms-above-shipped) | JPL's outbound leg sits 1.39 km/s above shipped, but a one-way search on the same dates sits only 0.36 above it, so most of that gap is the round trip. It also found a Lambert solver defect on short flights | measured; solver fixed; two wording rows in the register |
 
 ## What to run
 
@@ -64,6 +68,8 @@ dependencies are numpy and pandas ([`requirements.txt`](requirements.txt)).
 Network and downloads:
 - **Public read-only APIs.** These probes call them:
   - `probe_nhats.py` and `probe_prospector.py`: NHATS and Asterank
+  - `probe_nhats_legs.py`: NHATS, one request per body, paced at about one
+    every 1.5 s because JPL answers a faster client with HTTP 403
   - `probe_covariance.py` and `probe_recovery.py`: NEODyS
   - `probe_albedo_coverage.py`: IRSA and SsODNet
   - `probe_horizons.py`: JPL Horizons
@@ -96,6 +102,7 @@ py ../starred-repos/probe_albedo_coverage.py
 py ../starred-repos/probe_source_regions.py
 py ../starred-repos/probe_lightcurves.py
 py ../starred-repos/probe_horizons.py
+py ../starred-repos/probe_nhats_legs.py --n 400 --seed 1
 ```
 
 | file | what it measures | runtime |
@@ -114,9 +121,10 @@ py ../starred-repos/probe_horizons.py
 | `probe_source_regions.py` | Granvik et al.'s (2018) debiased source-region and albedo model against the guessed classes (F17). Checks the model file and the grid lookup first | ~2 min, plus a one-time download and parse |
 | `probe_lightcurves.py` | the Asteroid Lightcurve Database against the catalog's periods and F13 (F18). Reproduces four known rows of the table first | ~20 s, plus a one-time download |
 | `probe_horizons.py` | the two-body error in F4's Lambert oracle, measured by running it on JPL Horizons' trajectories (F19). Reproduces the docstring and solver checks, and checks its interpolation and frame, first | ~3 min live |
+| `probe_nhats_legs.py` | JPL's outbound legs against the shipped estimator and F4's oracle, on NHATS's object-mode trajectories (F20). Reproduces the docstring and solver checks, checks JPL's legs and parking orbit, and flies JPL's own trajectories from catalog elements, first | over an hour replayed; a live run adds at least 10 minutes of requests, more if JPL throttles it |
 | `run_all.py` | not a probe: runs the probes and compares their headline figures with [`figures.json`](figures.json); see [Checks](#checks) | the sum of the probes |
 | `snapshots.py` | not a probe: records and replays every network response | - |
-| `orbital.py` | Kepler solver, elements to state vectors, and a validated Izzo Lambert solver. `probe_lambert.py` imports it; it is not a probe. This is the only copy of the solvers and the one F4 was measured with. economicspace's root `orbital.py` keeps just `elements_to_state`, for the dashboard's orbit diagram, and the two copies of that function are the same text | - |
+| `orbital.py` | Kepler solver, elements to state vectors, and a validated Izzo Lambert solver, corrected on 2026-11-04 for short flights. `probe_lambert.py` imports it; it is not a probe. This is the only copy of the solvers and the one F4 was measured with. economicspace's root `orbital.py` keeps just `elements_to_state`, for the dashboard's orbit diagram, and the two copies of that function are the same text | - |
 
 The figures in the notes were taken on whatever catalog release was installed
 at the time, and a re-run against a later release moves them. On 2026-10-20
@@ -143,6 +151,21 @@ Also on 2026-10-29, the first `run_all.py` run found three more figures moved.
 
 Every F10 to F19 figure reproduced exactly.
 
+On 2026-11-04, still on release `data-2026-10-21b`, with Python 3.13.9, numpy
+2.2.6 and pandas 2.3.3, `probe_plane_change.py`, `probe_taxonomy.py`,
+`probe_taxonomy_prior.py` and `probe_spin.py` ran again. F11 and F13 reproduced
+exactly, and F1 and F2 read what they read on 2026-10-29. That checkout's
+`~/.cache/starred-repos` started empty, so the 2026-10-29 recordings and the
+three static tables were not there, and the probes that need them were not run.
+
+Later that day F20 found a defect in `lambert_izzo` on flights of 13 to 72 days,
+and `orbital.py` was corrected. F4 and F19 fly 91 days or more, where the two
+solvers agree on 2,400 of 2,400 random transfers. `probe_lambert.py` re-run on
+the fixed solver reads +1.367 and 87.5% optimistic, the same as on 2026-10-29,
+so F4's move from the recorded +1.296 is still the catalog's. F19 was not re-run,
+for the reason above. [FOURTH-PASS.md](FOURTH-PASS.md#the-solver-defect-this-found)
+has the detail.
+
 `py` is the Windows launcher; on Linux or macOS run the same commands with
 `python3`.
 
@@ -167,9 +190,10 @@ reads each headline figure back out with the patterns in
 [`figures.json`](figures.json), and prints it beside the recorded value with
 the release it was taken on. It writes the run to a dated JSON file under
 `~/.cache/starred-repos/runs/` and exits non-zero if a self-check fails or a
-figure goes missing. `--slow` adds the Lambert probe, `--offline` leaves out
-the probes that call public APIs, and `--replay <folder>` runs them from a
-recorded snapshot instead (see [`snapshots.py`](snapshots.py)). Replaying the
+figure goes missing. `--slow` adds the Lambert and JPL legs probes, `--offline`
+leaves out the probes that call public APIs and any whose static table is not
+cached yet, and `--replay <folder>` runs them from a recorded snapshot instead
+(see [`snapshots.py`](snapshots.py)). Replaying the
 2026-10-29 recording reproduced the live NHATS and NEODyS outputs line for
 line.
 

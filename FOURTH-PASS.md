@@ -3,13 +3,13 @@
 [`THIRD-PASS.md`](THIRD-PASS.md) read the 194 stars added after the first
 audit and measured one of them, prospector, against the shipped delta-v
 estimator (F10). This note holds the measurements that followed, each with
-its own probe. All were taken on 2026-10-29. F11 to F14 were moved here from
-THIRD-PASS.md unchanged when it grew too long to read.
+its own probe. F11 to F19 were taken on 2026-10-29, F20 on 2026-11-04. F11 to
+F14 were moved here from THIRD-PASS.md unchanged when it grew too long to read.
 
 Network answers behind F14 to F19 (NEODyS, IRSA, SsODNet, Horizons) were
-recorded through [`snapshots.py`](snapshots.py) on that day, so the figures
-can be reproduced after the services move on; the static tables (Toliou,
-Granvik, the LCDB) are pinned by sha256 in their probes.
+recorded through [`snapshots.py`](snapshots.py) on 2026-10-29, and F20's (NHATS)
+on 2026-11-04, so the figures can be reproduced after the services move on; the
+static tables (Toliou, Granvik, the LCDB) are pinned by sha256 in their probes.
 
 Every figure belongs to the catalog release named in its section.
 [`figures.json`](figures.json) records the headline ones, and
@@ -27,6 +27,7 @@ recorded values.
 | [F17](#f17-a-debiased-population-model-agrees-the-guessed-cs-are-mostly-not-dark) | what a debiased NEO population model says about the guessed classes | [`probe_source_regions.py`](probe_source_regions.py) |
 | [F18](#f18-the-lightcurve-database-adds-no-spins-and-trims-f13s-headline) | what the lightcurve database adds to F13 | [`probe_lightcurves.py`](probe_lightcurves.py) |
 | [F19](#f19-f4s-oracle-is-not-the-problem-its-two-body-error-is-00035-kms) | how much of F4's gap is the oracle's own two-body error | [`probe_horizons.py`](probe_horizons.py) |
+| [F20](#f20-most-of-jpls-gap-is-the-round-trip-and-a-dated-one-way-search-sits-036-kms-above-shipped) | what JPL's outbound legs say about the shipped estimator and F4's oracle | [`probe_nhats_legs.py`](probe_nhats_legs.py) |
 
 ---
 
@@ -627,3 +628,250 @@ oracle is an unconstrained two-impulse optimum and so itself optimistic,
 stands as written.
 
 No module, config or CSV was touched, and no number a run produces moved.
+
+---
+
+## F20. Most of JPL's gap is the round trip, and a dated one-way search sits 0.36 km/s above shipped
+
+Measured on 2026-11-04 with [`probe_nhats_legs.py`](probe_nhats_legs.py), against
+catalog release `data-2026-10-21b` and NHATS's object-mode answers as served
+that day: 7,166 NEAs from JPL, 7,143 joined to the catalog, 400 drawn at seed 1,
+plus 15 from the top 100 rows of the ranking. The answers are recorded in
+`snapshots/2026-11-04`, 415 with no errors, manifest sha256
+`7c41c7c9cb2fe80181a8f5d63918aa1bc96a8629b59cb1cab8ed36811982c81a`.
+
+F4 measured the shipped outbound figure against a date-free Lambert oracle. F6
+and F10 ranked it against NHATS's round trip, which is not an outbound figure.
+NHATS's object mode names the legs of each body's cheapest trajectory, so the
+outbound leg can be compared directly. JPL's leg is an upper bound on one-way
+cost: it belongs to the cheapest round trip of at most 450 days launched from
+2020 to 2045, and it can be paying for the return. So this also flies F4's
+objective on real dates. The dated oracle searches JPL's launch window and
+flight-time limit from the catalog's real phase, with no return. JPL's departure
+is repriced from the shipped 200 km LEO, so all the figures are on one scale.
+
+The probe reproduces the docstring (worst 0.0081 km/s) and the Lambert solver's
+round trip, now on 44 flights (worst 2.3e-12 km/s; see
+[below](#the-solver-defect-this-found)). All 415 bodies answered. JPL's legs sum
+to its `dv_total` within 0.0020 km/s, and its departure fits a 400 km parking
+orbit within 0.0007, a value its documentation does not name. None of the 415
+launches outside the dated oracle's window or flies a longer leg than it does.
+F4's solver then flies JPL's own dates from catalog elements: medians of 0.032
+km/s on departure and 0.018 on arrival, and on the 53 orbits with U <= 2, 0.045
+and 0.018, inside the 0.05 gate. No orbit leaves above the 72 km/s a bound
+transfer can reach (fastest 21.5). That last check was added after this run and
+read off its table.
+
+```
+NHATS SAMPLE  (n = 400)
+  outbound leg, km/s, all from the shipped 200 km LEO:
+    shipped closed form   median   4.647
+    F4's Lambert oracle   median   5.893   oracle minus shipped median +1.173
+    the oracle on dates   median   5.077   dated minus shipped  median +0.361
+    JPL's outbound leg    median   6.338   JPL minus shipped    median +1.392  p10 +0.406  p90 +3.175
+    shipped below JPL's leg on 97.5%, below the oracle on 99.8%
+    oracle above JPL's leg (not a minimum there): 149 (37.2%), median excess 0.443 km/s
+    dated oracle above JPL's leg: 5 (1.2%); a one-way leg costs JPL's minus dated, median +0.928 km/s less
+  leg by leg, km/s:
+    departure  shipped median  4.033   JPL median  4.036   rho 0.3813
+    rendezvous shipped median  0.454   JPL median  1.932   rho -0.0947
+    the oracle's own legs: departure median 4.201, rendezvous median 1.489; its rendezvous against JPL's rho 0.2113
+  rank agreement (Spearman):
+    estimator         JPL outbound  JPL round trip
+    shipped                 0.5798          0.6062
+    shipped depart          0.6358          0.7419
+    shipped match           0.0882          0.0156
+    split C                 0.5818          0.6086
+    prospector              0.6938          0.7880
+    Opik U                  0.5086          0.5048
+    F4 oracle               0.5208          0.5169
+    dated oracle            0.6490          0.6722
+    JPL outbound                            0.8449
+  split C saves median 0.012 km/s, p90 0.078; against JPL's leg it moves the median gap from +1.392 to +1.435
+  where JPL meets the body: degrees of true anomaly from the nearest apsis, median 16.6 (uniform would be 45.0)
+    within 30 deg of an apsis 76.0% (uniform 33.3%); heliocentric distance median 1.000 AU
+    JPL's nearest apsis is perihelion on 74.8%; the shipped model picks perihelion on 24.2%; they agree on 5.5%
+    F4's oracle, under no round-trip limit: nearest apsis is perihelion on 40.2%, 50.4 deg from it at the median, at 1.132 AU; best flight 0.99 yr against JPL's 0.44
+
+TOP 100 ROWS OF THE RANKING, IN NHATS  (n = 15)
+  outbound leg, km/s, all from the shipped 200 km LEO:
+    shipped closed form   median   4.639
+    F4's Lambert oracle   median   5.455   oracle minus shipped median +1.052
+    the oracle on dates   median   5.012   dated minus shipped  median +0.189
+    JPL's outbound leg    median   5.970   JPL minus shipped    median +1.070  p10 +0.198  p90 +3.097
+    shipped below JPL's leg on 100.0%, below the oracle on 100.0%
+    oracle above JPL's leg (not a minimum there): 6 (40.0%), median excess 0.895 km/s
+    dated oracle above JPL's leg: 0 (0.0%); a one-way leg costs JPL's minus dated, median +0.881 km/s less
+  leg by leg, km/s:
+    departure  shipped median  3.887   JPL median  4.041   rho -0.0607
+    rendezvous shipped median  0.384   JPL median  1.283   rho 0.1857
+    the oracle's own legs: departure median 4.120, rendezvous median 1.335; its rendezvous against JPL's rho 0.3536
+  rank agreement (Spearman):
+    estimator         JPL outbound  JPL round trip
+    shipped                 0.3500          0.7679
+    shipped depart          0.4357          0.7429
+    shipped match           0.2321         -0.0607
+    split C                 0.3500          0.7679
+    prospector              0.4893          0.8536
+    Opik U                  0.4071          0.3893
+    F4 oracle               0.3286          0.7500
+    dated oracle            0.4429          0.7571
+    JPL outbound                            0.5750
+  split C saves median 0.002 km/s, p90 0.013; against JPL's leg it moves the median gap from +1.070 to +1.070
+  where JPL meets the body: degrees of true anomaly from the nearest apsis, median 14.5 (uniform would be 45.0)
+    within 30 deg of an apsis 86.7% (uniform 33.3%); heliocentric distance median 0.981 AU
+    JPL's nearest apsis is perihelion on 86.7%; the shipped model picks perihelion on 13.3%; they agree on 0.0%
+    F4's oracle, under no round-trip limit: nearest apsis is perihelion on 46.7%, 32.1 deg from it at the median, at 1.065 AU; best flight 1.27 yr against JPL's 0.13
+
+GRID  F4's oracle against twice its resolution, n=30: median drop 0.124 km/s, p90 0.313, max 0.829
+```
+
+The figures below that are not in this output come from the probe's `--out`
+table, over the 400 unless they say otherwise.
+
+### What the gap is made of
+
+JPL's outbound leg sits a median 1.392 km/s above the shipped figure, which
+looks like confirmation of F4. It is not. Of that, 0.928 goes when the leg is
+flown one way on the same calendar. The dated search sits only +0.361 above
+shipped (p10 +0.028, p90 +0.930), and below it on 7.8% of bodies. So on NHATS
+NEAs the shipped figure is about 0.36 km/s under what a one-way search finds,
+close to the 0.40 to 0.46 km/s MODEL.md reports against the three real missions.
+The rest belongs to the round trip: either the 450 day limit, or trading the
+outbound burn against the return. This does not separate those two.
+
+**1.39 km/s is not the shipped model's one-way error, and 0.36 km/s does not
+replace F4's gap.** F4's sample is the whole catalog and mostly main belt; this
+one is NEAs a round trip can reach.
+
+### The rendezvous burn
+
+The whole median gap is at the rendezvous. Departure agrees in the median, 4.033
+against JPL's 4.036, and the rendezvous does not, 0.454 against 1.932. The two
+burns also fail differently. Departure ranks at 0.3813 against JPL's own, so it
+is at least related to it. The match burn ranks at -0.0947 against JPL's and
+0.0156 against the round trip, which is no signal at all. Shipped departure alone
+ranks at 0.7419 against the round trip, above the full estimator's 0.6062, so
+adding the match burn removes information. THIRD-PASS.md's F10 called the match
+burn "already weighted too heavily". That stands for rank, but its median is
+about a quarter of JPL's, so size is not the trouble. It carries nothing.
+
+JPL meets the body close to an apsis, 16.6 degrees at the median, and at 1.000
+AU. The shipped model picks the apsis farther from 1 AU on 97.5% of these bodies,
+and the two agree on only 5.5%, well under the 37% two independent picks would
+reach. That looks like the round trip's doing. F4's oracle, with no such limit,
+flies twice as long (0.99 years against 0.44), meets the body at 1.132 AU and
+prefers no apsis, 50.4 degrees from the nearest. The dated oracle's meeting place
+was not recorded, so this rests on F4's oracle only.
+
+### What ranks better
+
+- **Phasing is not the ceiling.** The probe's first question was whether a dated
+  search, which knows where the body is, ranks so far above a date-free one that
+  no date-free estimator could catch it. It does not. The dated oracle reaches
+  0.6490 against JPL's leg, and prospector, which knows no dates, reaches 0.6938.
+  Against the round trip they reach 0.6722 and 0.7880.
+- **A practical ceiling is about 0.84.** JPL's own outbound leg ranks at 0.8449
+  against its round trip, so no outbound estimator should be expected past that.
+  Prospector's 0.7880 is close, and the rest is the return.
+- **F4's oracle ranks below the closed form it was built to check,** 0.5208
+  against 0.5798 on JPL's leg.
+- **Split C closes F10's open line.** THIRD-PASS.md left whether it saves anything
+  here unmeasured. It saves a median 0.012 km/s, p90 0.078, and moves the gap
+  against JPL's leg from +1.392 to +1.435.
+- **Two ideas failed.** Öpik's encounter speed U, which needs no apsis, ranks at
+  0.5086, below the shipped figure. Charging the height of the shipped apsis out
+  of Earth's plane, `c * sin i * |sin w|`, lowers the rank from 0.5798 to 0.3951
+  at c = 20 and 0.3150 at c = 40, so the argument of perihelion does not explain
+  the gap either.
+
+JPL's gap grows with eccentricity (rho +0.543) and aphelion distance (+0.525).
+F4's oracle's does neither (+0.108, -0.019), one more sign that the two gaps
+measure different things.
+
+### F4's oracle is not a minimum on NEAs
+
+F4's oracle sits above JPL's leg on 149 of 400 bodies, a median 0.443 km/s. About
+half of that is reach: it flies nothing under 91 days, and JPL's flight is shorter
+than that on 34.5% of the sample. On the 74 bodies where JPL flies 91 days or more,
+the oracle could have flown the leg and still sits a median 0.409 above it.
+
+It also sits a median 0.658 above the dated search, and more than 0.01 below it on
+only 2.5%. `oracle_dv_out` flies 40 departures across one synodic period capped at
+12 years. FINDINGS.md's "every relative phase" holds for the Earth-asteroid angle
+only. That sweep is one line through the two orbital phases, so the departures are
+sparse on a long synodic period (median 38 days apart, p90 110), and the body's own
+place on its orbit is not swept. Doubling the grid, on 30 bodies, drops the oracle
+a median 0.124, p90 0.313. Scan length does not explain the rest: the gap to the
+dated search is +0.665 on the shorter half of scans and +0.645 on the longer, rho
++0.047. What is left is inferred to be the line through the phases, not isolated.
+FINDINGS.md and `probe_lambert.py` stand as written, and this is the limit on what
+they claim.
+
+Whether this holds on F4's own sample was not measured. Its bodies are mostly main
+belt, where one synodic period covers a small part of the body's orbit, so F4's 1.3
+km/s may be high as well.
+
+### The solver defect this found
+
+Chasing the bodies priced above JPL's leg found a bug in [`orbital.py`](orbital.py).
+On 2021 GQ10, `lambert_izzo` flew JPL's 25 day leg at 794 km/s. Between Izzo's T0
+and T1 the first guess was the wrong expression, and it could send the iteration
+below x = -1. There the hyperbolic form has a second root (x = -10.4 here) that
+means nothing and reads as converged. A third-derivative term also lacked a factor
+of x. The guess and the term now follow the paper, and a root below -1 returns no
+solution. The old check flew four long arcs and never reached that branch. It now
+flies each orbit at ten more arcs, 44 flights in all, and the old solver misses
+them by 6.1e+02 km/s. Each change has a test and a planted defect.
+
+The replay gate missed it too, because it read only medians on U <= 2 orbits, and
+none of the 14 bad legs had U <= 2. That is why the bound on every orbit was added.
+Run on this table, it passes the fixed solver and fails the old one on those 14.
+
+What the bug touched, checked rather than assumed:
+
+- **Reach.** On 1,200 random transfers of 5 to 91 days the two solvers differ on 9,
+  all from 21 to 72 days. On 2,400 of 91 days or more they differ on none.
+- **F4** flies 91 days and up. Re-run on the fixed solver it reads +1.367, 87.5%
+  optimistic, on release `data-2026-10-21b`, the same as the 2026-10-29 run on the
+  old solver.
+- **F19** flies the same grid, from 0.25 years, so it is in the range where the
+  solvers agree. It was not re-run, because its 2026-10-29 recordings are not on
+  this machine.
+- **F20** itself. A bad cell cost more than any real one, so a minimum skipped it.
+  Between a full run on each solver, none of the 415 dated, oracle or shipped
+  figures moved by more than 1e-9 km/s.
+
+### Cautions
+
+- **Two-body elements carry the dated search.** The replay shows the limit. On 17
+  of the 415 the solver lands over 1 km/s from JPL's leg. The solver is right on
+  all of them, reaching the catalog's place within 4e-10 AU when its departure is
+  integrated, but the place is wrong. On 11, sliding the body along its own orbit
+  by -23 to +68 days reproduces both of JPL's speeds within 0.13 km/s. On the other
+  six no slide does, and the catalog's orbit passes within 0.005 AU of Earth between
+  its epoch and the arrival. Elements fitted on one side of a pass like that need
+  not describe the other. That is 4% of bodies and the medians hold, but F19's bound
+  was not measured on bodies chosen for close approaches, and here launches run up
+  to 33.5 years from the element epoch.
+- **The dated search's 5 bodies above JPL are the same thing, not a missed
+  minimum.** Over the 415 they sit above JPL's leg by a median 0.019 km/s, 0.373 at
+  most. Flown on JPL's own dates, the same solver from the same elements gets no
+  lower than the dated search on any of them, bar 0.001 km/s on one. On 2021 GQ10
+  it reads 5.861 against the search's 5.417 and JPL's 5.044, so what separates the
+  search from JPL there is the body's place.
+- **The dated grid has converged in the median.** At 10 days against 20, on 30
+  bodies, it drops a median 0.002 km/s, p90 0.040, max 0.291. So the +0.361 is
+  high by about that much, and a few bodies by more.
+- **The replay gate's margin is thin:** 0.045 against 0.05 km/s, with a p90 of
+  0.519. It gates a median.
+- **Not separated:** the 450 day limit from the trade between outbound and return,
+  and F4's sweep from its grid beyond the 0.124 measured.
+- **n = 15 at the top of the ranking is noise.** Those rows are here to be complete.
+- **Two traps from the first runs.** JPL throttled the first live run and 243 of
+  415 were lost to HTTP 403, so the probe now waits and a coverage check fails a
+  run that loses any. The launch window first ended on 2045-01-01 rather than
+  2046-01-01, so `check_window` now requires the oracle to reach every JPL launch.
+
+`orbital.py` was corrected as above. No other module was touched, nothing in any
+other repo was, and no figure recorded earlier moved.

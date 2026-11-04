@@ -17,7 +17,8 @@ none of them reaches a CSV; they are the external oracles and tables
 - NASA JPL NHATS, `https://ssd-api.jpl.nasa.gov/nhats.api`. Optimised
   round-trip delta-v and mission duration for the near-Earth asteroids
   accessible to human spaceflight. Read by
-  `probe_nhats.py` and `probe_prospector.py`.
+  `probe_nhats.py` and `probe_prospector.py`, and in its object mode, which
+  gives each trajectory's dates and legs, by `probe_nhats_legs.py` (F20).
 - NASA JPL Horizons, `https://ssd.jpl.nasa.gov/api/horizons.api`. Recommended
   in F7, with the NAIF kernel archive, for bounding the two-body error in F4's
   Lambert oracle. Read by `probe_horizons.py` (F19): heliocentric ecliptic
@@ -280,6 +281,11 @@ Validated against a published worked example:
 > Vallado, D. A. *Fundamentals of Astrodynamics and Applications*, Example 7-5.
 
 Agreement is 7.4e-07 km/s, which is the precision the reference is quoted to.
+
+That example did not reach every branch. On 2026-11-04 the initial guess
+between Izzo's T0 and T1, and a term of the third derivative, were corrected
+against the paper, after F20 found answers of hundreds of km/s on flights of 13
+to 72 days. [FOURTH-PASS.md](FOURTH-PASS.md) says what that touched.
 See [`FINDINGS.md`](FINDINGS.md) F4.
 
 ### Apparent magnitude
@@ -290,6 +296,15 @@ at G = 0.15:
 > Bowell, E., Hapke, B., Domingue, D., Lumme, K., Peltoniemi, J., and Harris,
 > A. W. (1989). *Application of photometric models to asteroids.* In Asteroids
 > II, pp. 524-556. University of Arizona Press.
+
+### Encounter speed
+
+`probe_nhats_legs.py` (F20) takes a body's speed relative to Earth from the
+Tisserand parameter, U^2 = 3 - T, as a candidate estimator:
+
+> Opik, E. J. (1951). *Collision probabilities with the planets and the
+> distribution of interplanetary matter.* Proceedings of the Royal Irish
+> Academy 54A, 165-199.
 
 ### Multinomial logistic regression, and Hermite interpolation
 
